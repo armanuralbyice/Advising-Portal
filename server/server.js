@@ -17,7 +17,16 @@ const updateIsActiveField = require('././middleware/advisingScheduleFieldsUpdate
 const app = express()
 
 app.use(express.json())
-app.use(cors());
+app.use(cors(
+    {
+        origin: ["advising-portal-flax.vercel.app"],
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true
+    }
+));
+app.get('/', (req, res) => {
+    res.send('Hello')
+})
 cron.schedule('* * * * *', updateIsActiveField);
 
 const PORT = process.env.PORT || 3001
