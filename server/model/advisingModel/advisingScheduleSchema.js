@@ -20,7 +20,7 @@ const advisingScheduleSchema = new mongoose.Schema({
         required: true,
     },
     startTime: {
-        type: String, // Assuming you want to input time as a string
+        type: String,
         required: true,
     },
     endTime: {
@@ -29,7 +29,7 @@ const advisingScheduleSchema = new mongoose.Schema({
     },
     isActive: {
         type: Boolean,
-        default: false, // Default isActive to false
+        default: false,
     }
 });
 

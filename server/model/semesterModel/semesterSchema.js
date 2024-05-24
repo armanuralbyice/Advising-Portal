@@ -15,7 +15,11 @@ const semesterSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'OfferCourse'
         }
-    ]
+    ],
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 semesterSchema.virtual('semesterName').get(function () {

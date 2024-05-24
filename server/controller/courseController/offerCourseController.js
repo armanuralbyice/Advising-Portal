@@ -77,9 +77,6 @@ exports.offerCourse = catchAsync(async (req, res, next) => {
     }
 });
 
-
-
-
 exports.deleteOfferCourse = catchAsync(async (req, res, next)=>{
     const offerCourseID = req.params.id;
     const offerCourse = await OfferCourse.findOne({offerCourseID})
