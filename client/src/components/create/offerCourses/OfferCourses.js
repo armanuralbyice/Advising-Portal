@@ -1,168 +1,120 @@
-import React, { useEffect, useState } from 'react';
-import axios from "axios";
 import MetaData from "../../layout/MetaData";
 import './offerCourses.css';
+import {useEffect, useState} from "react";
+import {
+    fetchClassRooms,
+    fetchCourses,
+    fetchDepartmentData,
+    fetchFaculties,
+    fetchSemesterData
+} from "../../utils/fetchData";
+import axios from "axios";
 import {toast} from "react-toastify";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCirclePlus, faPenToSquare, faTrash} from "@fortawesome/free-solid-svg-icons";
 
 const OfferCourses = ({ isSidebarClosed }) => {
-    const [offerCourses, setOfferCourses] = useState([]);
-    const [selectedDepartment, setSelectedDepartment] = useState('');
-    const [selectedSemester, setSelectedSemester] = useState('');
     const [semesters, setSemesters] = useState([]);
     const [departments, setDepartments] = useState([]);
-    const [classrooms, setClassrooms] = useState([]);
-    const [faculties, setFaculties] = useState([]);
     const [courses, setCourses] = useState([]);
-    const [selectedCourses, setSelectedCourses] = useState([]);
-    const [conflictWarning, setConflictWarning] = useState('');
+    const [faculties, setFaculties] = useState([]);
+    const [classrooms, setClassrooms] = useState([]);
+    const [selectedDepartment, setSelectedDepartment] = useState('')
+    const [selectedSemester, setSelectedSemester] = useState('')
+    const [isConflict, setIsConflict] = useState(false);
+    const [offerCourses, setOfferCourses] = useState([{
+        classRoom: "",
+        labRoom: "",
+        facultyName: "",
+        courseName: "",
+        seat: '',
+        section: '',
+        classTime: "",
+        labTime: ""
+    }]);
+    const fetchInitialData = async () => {
+        try {
+            const SemesterResponse = await fetchSemesterData();
+            if (SemesterResponse && Array.isArray(SemesterResponse.semester)) {
+                setSemesters(SemesterResponse.semester);
+            } else {
+                console.error("Semester data is not in the expected format", SemesterResponse);
+            }
 
-    console.log(courses)
-    const fetchSemesters = () => {
-        axios.get('http://localhost:4000/api/v1/semesters/all')
-            .then((res) => {
-                setSemesters(res.data.semester);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
+            const departmentResponse = await fetchDepartmentData();
+            if(departmentResponse && Array.isArray(departmentResponse.department)){
+                setDepartments(departmentResponse.department)
+            }
+            else{
+                console.error("Department data is not in the expected format", departmentResponse);
+            }
 
-    const fetchDepartments = () => {
-        axios.get('http://localhost:4000/api/v2/departments/all')
-            .then((res) => {
-                setDepartments(res.data.department);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
+            const classroomResponse = await fetchClassRooms();
+            if(classroomResponse && Array.isArray(classroomResponse.classrooms)){
+                setClassrooms(classroomResponse.classrooms)
+            }
+            else{
+                console.error("Classroom data is not in the expected format", classroomResponse);
+            }
 
-    const fetchClassrooms = () => {
-        axios.get('http://localhost:4000/api/v6/classroom/all')
-            .then((res) => {
-                setClassrooms(res.data.classrooms);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
+            if(selectedDepartment){
+                const courseResponse = await fetchCourses(selectedDepartment);
+                if(courseResponse && Array.isArray(courseResponse.courses)){
+                    setCourses(courseResponse.courses)
+                }
+                else {
+                    console.error("Course data is not in the expected format", courseResponse);
+                }
 
-    const fetchFaculties = () => {
-        axios.get(`http://localhost:4000/api/v3/department/${selectedDepartment}/faculties`)
-            .then((res) => {
-                setFaculties(res.data.faculties);
-                console.log(res.data.faculties);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
-
-    const fetchCourses = () => {
-        axios.get(`http://localhost:4000/api/v4/courses/filter?department=${selectedDepartment}`)
-            .then((res) => {
-                setCourses(res.data.courses);
-                console.log(res.data.courses);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
-
-    useEffect(() => {
-        fetchDepartments();
-        fetchSemesters();
-        fetchClassrooms();
-        if (selectedDepartment) {
-            fetchCourses();
-            fetchFaculties();
+                const facultyResponse = await fetchFaculties(selectedDepartment);
+                if(facultyResponse && Array.isArray(facultyResponse.faculties)){
+                    setFaculties(facultyResponse.faculties)
+                }
+                else {
+                    console.error("Faculty data is not in the expected format", facultyResponse);
+                }
+            }
+        } catch (err) {
+            console.log(err);
         }
+    };
+    useEffect(() => {
+        fetchInitialData();
     }, [selectedDepartment]);
 
-    const handleInputChange = (courseId, field, value) => {
-        setOfferCourses(offerCourses?.map(course =>
-            course._id === courseId
-                ? { ...course, [field]: value }
-                : course
-        ));
-    };
-
-
-    const handleSemesterChange = (event) => {
-        setSelectedSemester(event.target.value);
-    };
-    const handleCourseSelection = (event) => {
-        const courseId = event.target.value;
-        const isChecked = event.target.checked;
-
-        if (isChecked) {
-            const selectedCourse = courses.find(course => course._id === courseId);
-            if (selectedCourse) {
-                setOfferCourses([...offerCourses, selectedCourse]);
-            }
-        } else {
-            setOfferCourses(offerCourses?.filter(course => course._id !== courseId));
-        }
-    };
-    const handleCreateSection = (courseId, event) => {
-        event.preventDefault();
-        setOfferCourses(offerCourses.map(course =>
-            course._id === courseId ? { ...course, sections: [ {
-                    facultyName: '',
-                    seat: '',
-                    section: '',
-                    classTime: '',
-                    labTime: '',
-                    classRoom: '',
-                    labRoom: ''
-                }] } : course
-        ));
-    };
-    const handleSubmit = (event) => {
-        event.preventDefault();
-
-        const selectedCourses = offerCourses?.filter(course => courses.some(c => c._id === course._id));
-
-        const dataToSend = {
-            semester: selectedSemester,
-            department: selectedDepartment,
-            courses: selectedCourses.map(course => ({
-                courseName: course._id,
-                seat: course.seat,
-                section: course.section,
-                classTime: course.classTime,
-                labTime: course.labTime,
-                classRoom: course.classRoom,
-                labRoom: course.labRoom,
-                facultyName: course.facultyName,
-            }))
-
-        };
-        console.log(dataToSend)
-
-        axios.post('http://localhost:4000/api/v5/offerCourse/add', dataToSend)
-            .then((res) => {
-                console.log('Courses offered successfully:', res.data);
-            })
-            .catch((err) => {
-                console.error('Error offering courses:', err);
-            });
-    };
+    const handelDepartmentChange = (e)=>{
+        const department = e.target.value;
+        setSelectedDepartment(department);
+    }
+    const handelSemesterChange = (e)=>{
+        const semester = e.target.value;
+        setSelectedSemester(semester);
+    }
+    const addCourse = () =>{
+        setOfferCourses([...offerCourses, {
+            classRoom: "",
+            labRoom: "",
+            facultyName: "",
+            courseName: "",
+            seat: '',
+            section: '',
+            classTime: "",
+            labTime: ""
+        }])
+    }
     const checkForConflicts = () => {
-        const roomSchedule = {}; // Map to store room schedules
-        const facultySchedule = {}; // Map to store faculty schedules
+        const roomSchedule = {};
+        const facultySchedule = {};
         let conflictFound = false;
 
-        offerCourses?.forEach(course => {
-            const { classTime, labTime, classRoom, labRoom, facultyName } = course;
+        offerCourses?.forEach((course, index) => {
+            const { classTime, labTime, classRoom, labRoom, facultyName, courseName, section } = course;
 
             // Check for class conflicts
             if (classTime && classRoom) {
                 const classKey = `${classTime}-${classRoom}`;
                 if (roomSchedule[classKey]) {
-                    toast.warning(`Two classes are scheduled in room at the same time!`);
                     conflictFound = true;
-                    setConflictWarning(`Two classes are scheduled in room at the same time!`);
                     return;
                 }
                 roomSchedule[classKey] = true;
@@ -172,9 +124,7 @@ const OfferCourses = ({ isSidebarClosed }) => {
             if (labTime && labRoom) {
                 const labKey = `${labTime}-${labRoom}`;
                 if (roomSchedule[labKey]) {
-                    toast.warning(`Two labs are scheduled in room at the same time!`);
                     conflictFound = true;
-                    setConflictWarning(`Two labs are scheduled in room at the same time!`);
                     return;
                 }
                 roomSchedule[labKey] = true;
@@ -184,10 +134,7 @@ const OfferCourses = ({ isSidebarClosed }) => {
             if (facultyName) {
                 if (classTime) {
                     if (facultySchedule[facultyName] && facultySchedule[facultyName].includes(classTime)) {
-                        toast.warning(`Faculty is teaching multiple classes at the same time!`);
                         conflictFound = true;
-                        setConflictWarning(`Faculty is teaching multiple classes at the same time!`);
-                        console.log(facultyName)
                         return;
                     }
                     facultySchedule[facultyName] = facultySchedule[facultyName] ? [...facultySchedule[facultyName], classTime] : [classTime];
@@ -195,25 +142,61 @@ const OfferCourses = ({ isSidebarClosed }) => {
 
                 if (labTime) {
                     if (facultySchedule[facultyName] && facultySchedule[facultyName].includes(labTime)) {
-                        toast.warning(`Faculty is teaching multiple labs at the same time!`);
                         conflictFound = true;
-                        setConflictWarning(`Faculty is teaching multiple labs at the same time!`);
                         return;
                     }
                     facultySchedule[facultyName] = facultySchedule[facultyName] ? [...facultySchedule[facultyName], labTime] : [labTime];
                 }
             }
+
+            // Check for same course in the same section conflicts
+            const sameCourseConflict = offerCourses.findIndex((otherCourse, otherIndex) => {
+                return otherIndex !== index && otherCourse.courseName === courseName && otherCourse.section === section;
+            });
+
+            if (sameCourseConflict !== -1) {
+                conflictFound = true;
+            }
         });
 
-        if (!conflictFound) {
-            setConflictWarning('');
+        return conflictFound;
+    };
+
+
+    const handleOfferCourseChange = (index, field, value) => {
+        const newOfferCourses = [...offerCourses];
+        newOfferCourses[index][field] = value;
+        setOfferCourses(newOfferCourses);
+        const hasConflict = checkForConflicts(newOfferCourses);
+        setIsConflict(hasConflict);
+    };
+
+
+    const removeCourse = (index) => {
+        const newOfferCourses = [...offerCourses];
+        newOfferCourses.splice(index, 1);
+        setOfferCourses(newOfferCourses);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const dataToSend = {
+            semester: selectedSemester,
+            department: selectedDepartment,
+            courses: offerCourses
+        };
+
+        try {
+            const response = await axios.post('http://localhost:4000/api/v5/offerCourse/add', dataToSend);
+            console.log('Courses offered successfully:', response.data);
+            toast.success("Courses offered successfully!");
+        } catch (err) {
+            console.error('Error offering courses:', err);
+            toast.error("Error offering courses!");
         }
     };
 
-    // useEffect to call checkForConflicts whenever offerCourses or their schedules change
-    useEffect(() => {
-        checkForConflicts();
-    }, [offerCourses]);
+
     return (
         <div className={`home-section ${isSidebarClosed ? 'sidebar-close' : ''}`}>
             <MetaData title={'Offer Courses'} />
@@ -222,58 +205,46 @@ const OfferCourses = ({ isSidebarClosed }) => {
                     <h2>Offer Courses</h2>
                 </div>
                 <form onSubmit={handleSubmit}>
-                    <div className='description-and-offerCourseShow-Box'>
-                        <div className='description'>
-                            <div className="input-field" style={{ marginRight: '20px' }}>
-                                <label>Semester</label>
-                                <select
-                                    style={{ width: '250px' }}
-                                    name="semester"
-                                    value={selectedSemester}
-                                    onChange={handleSemesterChange}
-                                >
-                                    <option value=''>Select</option>
-                                    {semesters.map(semester => (
-                                        <option key={semester._id} value={semester._id}>
-                                            {`${semester.season}-${semester.year}`}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="input-field" style={{ marginRight: '20px' }}>
-                                <label>Department</label>
-                                <select
-                                    style={{ width: '250px' }}
-                                    name="department"
-                                    value={selectedDepartment}
-                                    onChange={(e) => setSelectedDepartment(e.target.value)}
-                                    required
-                                >
-                                    <option value=''>Select</option>
-                                    {departments.map(department => (
-                                        <option key={department._id} value={department._id}>
-                                            {department.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                    <div className='description'>
+                        <div className="input-field" style={{marginRight: '20px'}}>
+                            <label>Semester</label>
+                            <select
+                                style={{width: '250px'}}
+                                name="semester"
+                                value={selectedSemester}
+                                onChange={handelSemesterChange}
+                            >
+                                <option value=''>Select</option>
+                                {semesters.map(semester => (
+                                    <option key={semester._id} value={semester._id}>
+                                        {`${semester.season}-${semester.year}`}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
-                        <div className='offerCoursesShow'>
-                            <h4>{offerCourses?.length} courses added</h4>
-                            <div className='showCourse'>
-                                <ul>
-                                    {/*{offerCourses.map(course => (*/}
-                                    {/*    <li key={course._id}>{course.courseCode}</li>*/}
-                                    {/*))}*/}
-                                </ul>
-                            </div>
+                        <div className="input-field" style={{marginRight: '20px'}}>
+                            <label>Department</label>
+                            <select
+                                style={{width: '250px'}}
+                                name="department"
+                                value={selectedDepartment}
+                                onChange={handelDepartmentChange}
+                                required
+                            >
+                                <option value=''>Select</option>
+                                {departments.map(department => (
+                                    <option key={department._id} value={department._id}>
+                                        {department.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                     <div className='offerCoursesContainer'>
                         <div className='selectOfferCourses'>
                             <div className='course-list-box'>
                                 <table>
-                                    <thead>
+                                    <thead style={{'position':'relative'}}>
                                     <tr>
                                         <th>Course Code</th>
                                         <th>Seat</th>
@@ -287,152 +258,145 @@ const OfferCourses = ({ isSidebarClosed }) => {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {courses.map(course => {
-                                        const isSelected = offerCourses?.length>0 && offerCourses?.some(c => c._id === course._id);
-                                        return (
-                                            <tr key={course._id}>
-                                                <td>
-                                                    <div className='input-field-checkBox'>
-                                                        <input
-                                                            type='checkbox'
-                                                            value={course._id}
-                                                            onChange={handleCourseSelection}
-                                                        />
-                                                        <label>{course.courseCode}</label>
-                                                    </div>
-                                                </td>
-                                                {isSelected && (
-                                                    <>
-                                                        <td>
-                                                            <div className="input-field-offerCourses">
-                                                                <input
-                                                                    type="text"
-                                                                    placeholder="seat?"
-                                                                    value={offerCourses.find(c => c._id === course._id)?.seat || ''}
-                                                                    onChange={(e) => handleInputChange(course._id, 'seat', e.target.value)}
-                                                                    required
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className="input-field-offerCourses">
-                                                                <select
-                                                                    value={offerCourses.find(c => c._id === course._id)?.section || ''}
-                                                                    onChange={(e) => handleInputChange(course._id, 'section', e.target.value)}
-                                                                    disabled={!!conflictWarning}
-                                                                >
-                                                                    <option value="">Select</option>
-                                                                    <option value="1">1</option>
-                                                                    <option value="2">2</option>
-                                                                    <option value="3">3</option>
-                                                                    <option value="4">4</option>
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className="input-field-offerCourses">
-                                                                <select
-                                                                    value={offerCourses.find(c => c._id === course._id)?.classTime || ''}
-                                                                    onChange={(e) => handleInputChange(course._id, 'classTime', e.target.value)}
-                                                                >
-                                                                    <option value="">Select</option>
-                                                                    <option value="ST 8:30-9:30">ST 8:30-9:30</option>
-                                                                    <option value="MW 8:30-9:30">MW 8:30-9:30</option>
-                                                                    <option value="TR 8:30-9:30">TR 8:30-9:30</option>
-                                                                    <option value="ST 9:40-10:40">ST 9:40-10:40</option>
-                                                                    <option value="MW 9:40-10:40">MW 9:40-10:40</option>
-                                                                    <option value="TR 9:40-10:40">TR 9:40-10:40</option>
-                                                                    <option value="ST 10:50-11:50">ST 10:50-11:50</option>
-                                                                    <option value="MW 12:00-1:00">MW 12:00-1:00</option>
-                                                                    <option value="TR 12:00-1:00">TR 12:00-1:00</option>
-                                                                    <option value="ST 12:00-1:00">ST 12:00-1:00</option>
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className="input-field-offerCourses">
-                                                                <select
-                                                                    value={offerCourses.find(c => c._id === course._id)?.labTime || ''}
-                                                                    onChange={(e) => handleInputChange(course._id, 'labTime', e.target.value)}
-                                                                    // disabled={course.credit < 4}
-                                                                >
-                                                                    <option value="">Select</option>
-                                                                    <option value="S 2:00-3:30">S 2:00-3:30</option>
-                                                                    <option value="S 4:00-5:30">S S 4:00-5:30</option>
-                                                                    <option value="M 2:00-3:30">M 2:00-3:30</option>
-                                                                    <option value="M 4:00-5:30">M 4:00-5:30</option>
-                                                                    <option value="T 2:00-3:30">T 2:00-3:30</option>
-                                                                    <option value="T 4:00-5:30">T 4:00-5:30</option>
-                                                                    <option value="R 2:00-3:30">R 2:00-3:30</option>
-                                                                    <option value="R 4:00-5:30">R 4:00-5:30</option>
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className="input-field-offerCourses">
-                                                                <select
-                                                                    value={offerCourses.find(c => c._id === course._id)?.classRoom || ''}
-                                                                    onChange={(e) => handleInputChange(course._id, 'classRoom', e.target.value)}
-                                                                >
-                                                                    <option value="">Select</option>
-                                                                    {classrooms.map(room => (
-                                                                        <option key={room._id} value={room._id}>
-                                                                            {room.building}-{room.classroomNo}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className="input-field-offerCourses">
-                                                                <select
-                                                                    value={offerCourses.find(c => c._id === course._id)?.labRoom || ''}
-                                                                    onChange={(e) => handleInputChange(course._id, 'labRoom', e.target.value)}
-                                                                    // disabled={course.credit < 4}
-                                                                >
-                                                                    <option value="">Select</option>
-                                                                    {classrooms.map(room => (
-                                                                        <option key={room._id} value={room._id}>
-                                                                            {room.building}-{room.classroomNo}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className="input-field-offerCourses">
-                                                                <select
-                                                                    value={offerCourses.find(c => c._id === course._id)?.facultyName || ''}
-                                                                    onChange={(e) => handleInputChange(course._id, 'facultyName', e.target.value)}
-                                                                    disabled={!!conflictWarning}
-                                                                >
-                                                                    <option value="">Select</option>
-                                                                    {faculties.map(faculty => (
-                                                                        <option key={faculty._id} value={faculty._id}>
-                                                                            {faculty.name}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <button
-                                                                className='button-create-section'
-                                                                onClick={(event)=>handleCreateSection(course._id,event)}>
-                                                                Create section
-                                                            </button>
-                                                        </td>
-                                                    </>
-                                                )}
-
-                                            </tr>
-                                        );
-                                    })}
+                                    {offerCourses.map((course, index) => (
+                                        <tr key={index}>
+                                            <td>
+                                                <div className="input-field-offerCourses">
+                                                    <select
+                                                        value={course.courseName}
+                                                        onChange={(e) => handleOfferCourseChange(index, 'courseName', e.target.value)}
+                                                    >
+                                                        <option value="">Select</option>
+                                                        {courses.map(c => (
+                                                            <option key={c._id} value={c._id}>
+                                                                {c.courseCode}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="input-field-offerCourses">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="seat?"
+                                                        value={course.seat}
+                                                        onChange={(e) => handleOfferCourseChange(index, 'seat', e.target.value)}
+                                                        required
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="input-field-offerCourses">
+                                                    <select
+                                                        value={course.section}
+                                                        onChange={(e) => handleOfferCourseChange(index, 'section', e.target.value)}
+                                                    >
+                                                        <option value="">Select</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="input-field-offerCourses">
+                                                    <select
+                                                        value={course.classTime}
+                                                        onChange={(e) => handleOfferCourseChange(index, 'classTime', e.target.value)}
+                                                    >
+                                                        <option value="">Select</option>
+                                                        <option value="ST 8:30-9:30">ST 8:30-9:30</option>
+                                                        <option value="MW 8:30-9:30">MW 8:30-9:30</option>
+                                                        <option value="TR 8:30-9:30">TR 8:30-9:30</option>
+                                                        <option value="ST 9:40-10:40">ST 9:40-10:40</option>
+                                                        <option value="MW 9:40-10:40">MW 9:40-10:40</option>
+                                                        <option value="TR 9:40-10:40">TR 9:40-10:40</option>
+                                                        <option value="ST 10:50-11:50">ST 10:50-11:50</option>
+                                                        <option value="MW 12:00-1:00">MW 12:00-1:00</option>
+                                                        <option value="TR 12:00-1:00">TR 12:00-1:00</option>
+                                                        <option value="ST 12:00-1:00">ST 12:00-1:00</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="input-field-offerCourses">
+                                                    <select
+                                                        value={course.labTime}
+                                                        onChange={(e) => handleOfferCourseChange(index, 'labTime', e.target.value)}
+                                                    >
+                                                        <option value="">Select</option>
+                                                        <option value="S 2:00-3:30">S 2:00-3:30</option>
+                                                        <option value="S 4:00-5:30">S S 4:00-5:30</option>
+                                                        <option value="M 2:00-3:30">M 2:00-3:30</option>
+                                                        <option value="M 4:00-5:30">M 4:00-5:30</option>
+                                                        <option value="T 2:00-3:30">T 2:00-3:30</option>
+                                                        <option value="T 4:00-5:30">T 4:00-5:30</option>
+                                                        <option value="R 2:00-3:30">R 2:00-3:30</option>
+                                                        <option value="R 4:00-5:30">R 4:00-5:30</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="input-field-offerCourses">
+                                                    <select
+                                                        value={course.classRoom}
+                                                        onChange={(e) => handleOfferCourseChange(index, 'classRoom', e.target.value)}
+                                                    >
+                                                        <option value="">Select</option>
+                                                        {classrooms.map(room => (
+                                                            <option key={room._id} value={room._id}>
+                                                                {room.building}-{room.classroomNo}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="input-field-offerCourses">
+                                                    <select
+                                                        value={course.labRoom}
+                                                        onChange={(e) => handleOfferCourseChange(index, 'labRoom', e.target.value)}
+                                                    >
+                                                        <option value="">Select</option>
+                                                        {classrooms.map(room => (
+                                                            <option key={room._id} value={room._id}>
+                                                                {room.building}-{room.classroomNo}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="input-field-offerCourses">
+                                                    <select
+                                                        value={course.facultyName}
+                                                        onChange={(e) => handleOfferCourseChange(index, 'facultyName', e.target.value)}
+                                                    >
+                                                        <option value="">Select</option>
+                                                        {faculties.map(faculty => (
+                                                            <option key={faculty._id} value={faculty._id}>
+                                                                {faculty.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className='addAndRemoveButton'>
+                                                    <FontAwesomeIcon icon={faCirclePlus} onClick={addCourse}    disabled={isConflict}/>
+                                                    <FontAwesomeIcon icon={faTrash}
+                                                                     onClick={() => removeCourse(index)}    disabled={isConflict}/>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                                     </tbody>
                                 </table>
                             </div>
                             <div className='btn'>
-                                <button type='submit' className="button">Submit</button>
+                                <button type='submit' className="button" disabled={isConflict}>Submit</button>
                             </div>
                         </div>
                     </div>

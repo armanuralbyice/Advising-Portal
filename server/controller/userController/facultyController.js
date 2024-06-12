@@ -29,16 +29,8 @@ exports.getAllFaculties = catchAsync(async (req, res, next)=>{
 
 // get faculties by department
 exports.getFacultiesByDepartment = catchAsync(async (req, res, next) => {
-    let departmentQuery;
-    if (req.params.id) {
-        departmentQuery = { _id: req.params.id };
-    } else if (req.params.name) {
-        departmentQuery = { name: req.params.name };
-    } else {
-        return next(new ErrorHandler('Department ID or name must be provided', 400));
-    }
-
-    const department = await Department.findOne({departmentQuery}).populate('faculties');
+    const {departmentId} =req.params
+    const department = await Department.findOne({_id:departmentId}).populate('faculties');
     if (!department) {
         return next(new ErrorHandler('Department not found', 404));
     }

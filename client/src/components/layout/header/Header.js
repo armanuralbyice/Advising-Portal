@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faAngleDown, faBars, faHouse, faPersonCirclePlus, faPlus, faUsersGear} from '@fortawesome/free-solid-svg-icons';
+import {
+    faAngleDown,
+    faBars,
+    faHouse,
+    faPersonCirclePlus,
+    faPlus,
+    faShapes,
+    faUsersGear
+} from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
 import { Link } from 'react-router-dom';
 import MetaData from '../MetaData';
@@ -87,6 +95,19 @@ const Header = ({ isSidebarClosed, toggleSidebar }) => {
                         <li><Link to="student/registation">Student</Link></li>
                         <li><Link to="faculty/registation">Faculty</Link></li>
                         <li><Link to="admin/registation">Admin</Link></li>
+                    </ul>
+                </li>
+                <li>
+                    <Link to='/showOfferCourses'>
+                        <i><FontAwesomeIcon icon={faShapes}/></i>
+                        <span className="link_name">Offer Courses</span>
+                    </Link>
+                    <ul className="sub-menu blank">
+                        <li>
+                            <Link to='showOfferCourses' className="link_name">
+                                Offer Courses
+                            </Link>
+                        </li>
                     </ul>
                 </li>
                 <li>

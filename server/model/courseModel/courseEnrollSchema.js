@@ -9,14 +9,14 @@ const courseEnrollSchema = new mongoose.Schema({
     },
     semester: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Semester', // Reference the Semester model
+        ref: 'Semester',
         required: true,
     },
-    courses: [
+    enrollCourses: [
         {
             course: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: 'OfferCourse',
+                ref: 'OfferCourse'
             },
             marks: {
                 mid1: {
@@ -44,7 +44,7 @@ const courseEnrollSchema = new mongoose.Schema({
 courseEnrollSchema.pre('save', async function(next) {
     try {
         // Loop through each course enrolled
-        for (const enrolledCourse of this.courses) {
+        for (const enrolledCourse of this.enrollCourses) {
             const course = await OfferCourse.findById(enrolledCourse.course);
             if (course) {
                 // Decrease available seats by 1

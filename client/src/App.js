@@ -12,10 +12,12 @@ import Department from "./components/create/Department";
 import Course from "./components/create/Course";
 import OfferCourses from "./components/create/offerCourses/OfferCourses";
 import Classroom from "./components/create/Classroom";
+import Login from "./components/login/Login";
+import ShowOfferCourses from "./components/show offer courses/ShowOfferCourses";
 
 function App() {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
-  const [isSidebarClosed, setIsSidebarClosed] = useState(false);
+  const [isSidebarClosed, setIsSidebarClosed] = useState(true);
 
   const toggleSubMenu = () => {
     setIsSubMenuOpen(prevState => !prevState);
@@ -33,6 +35,7 @@ function App() {
       <div className="App">
         <Router>
           <Routes>
+            <Route path="/login" element={<Login/>} />
             <Route path="/" element={(<><Header
                 toggleSubMenu={toggleSubMenu}
                 toggleSidebar={toggleSidebar}
@@ -50,6 +53,7 @@ function App() {
               <Route path="/create/course" element={<Course isSidebarClosed={isSidebarClosed}/>} />
               <Route path="/create/offerCourse" element={<OfferCourses isSidebarClosed={isSidebarClosed}/>} />
               <Route path="/create/classroom" element={<Classroom isSidebarClosed={isSidebarClosed}/>} />
+              <Route path="/showOfferCourses" element={<ShowOfferCourses isSidebarClosed={isSidebarClosed}/>} />
             </Route>
           </Routes>
         </Router>

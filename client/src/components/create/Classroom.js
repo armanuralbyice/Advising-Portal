@@ -78,7 +78,7 @@ const Classroom = ({ isSidebarClosed }) => {
     const handleDelete = async (id) => {
         try {
             await axios.delete(`http://localhost:4000/api/v6/classroom/delete/${id}`);
-            setClassrooms(classrooms.filter(semester => semester._id !== id));
+            setClassrooms(classrooms.filter(classroom => classroom._id !== id));
             toast.success('Semester deleted successfully');
         } catch (error) {
             console.error('Error deleting semester:', error);
