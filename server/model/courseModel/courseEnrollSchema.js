@@ -43,19 +43,37 @@ const courseEnrollSchema = new mongoose.Schema({
 // Middleware to decrement available seats when a course is enrolled
 courseEnrollSchema.pre('save', async function(next) {
     try {
-        // Loop through each course enrolled
+        const session = await mongoose.startSession();
+        session.startTransaction();
+
         for (const enrolledCourse of this.enrollCourses) {
-            const course = await OfferCourse.findById(enrolledCourse.course);
-            if (course) {
+            const course = await OfferCourse.findById(enrolledCourse.course).session(session);
+
+            if (!course) {
+                throw new Error(`Course not found for id ${enrolledCourse.course}`);
+            }
+
+            // Check if seats are available
+            if (course.seat > 0) {
                 // Decrease available seats by 1
                 course.seat--;
-                await course.save();
+                await course.save({ session });
+            } else {
+                // Rollback transaction if no seats available
+                await session.abortTransaction();
+                await session.endSession();
+                throw new Error(`No seats available for course ${course._id}`);
             }
         }
+
+        await session.commitTransaction();
+        await session.endSession();
+
         next();
     } catch (error) {
         next(error);
     }
 });
+
 
 module.exports = mongoose.model('CourseEnroll', courseEnrollSchema);

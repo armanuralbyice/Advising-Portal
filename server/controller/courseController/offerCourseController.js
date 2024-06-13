@@ -4,7 +4,7 @@ const Semester = require('../../model/semesterModel/semesterSchema');
 const Department = require('../../model/departmentModel/departmentSchema');
 const ErrorHandler = require('../../utils/ErrorHandler');
 const catchAsync = require('../../middleware/catchAsyncError');
-
+// post offerCourses
 exports.offerCourse = catchAsync(async (req, res, next) => {
     const { semester, department, courses } = req.body;
 
@@ -14,14 +14,11 @@ exports.offerCourse = catchAsync(async (req, res, next) => {
         if (!semesterExists) {
             return next(new ErrorHandler('No such semester found', 404));
         }
-
-        // Check if department exists
         const departmentExists = await Department.findById(department);
         if (!departmentExists) {
             return next(new ErrorHandler('No such department found', 404));
         }
 
-        // Save individual OfferCourse documents
         const savedOfferCourses = [];
         const skippedCourses = [];
 
@@ -42,47 +39,34 @@ exports.offerCourse = catchAsync(async (req, res, next) => {
                 });
                 savedOfferCourses.push(await newOfferCourse.save());
             } else {
-                // If course with the same section already exists, skip saving
                 skippedCourses.push(courseData.courseName);
-                savedOfferCourses.push(existingCourse); // Push existing course to savedOfferCourses
+                savedOfferCourses.push(existingCourse);
             }
         }
-
-        // Get IDs of the saved OfferCourse documents
         const savedOfferCourseIds = savedOfferCourses.map(course => course._id);
-
-        // Create or update OfferCourseDetails
         let offerCourseDetails = await OfferCourseDetails.findOne({ department, semester });
 
         if (!offerCourseDetails) {
-            // If no offerCourseDetails document exists, create a new one
             offerCourseDetails = new OfferCourseDetails({
                 semester,
                 department,
                 courses: savedOfferCourseIds
             });
         } else {
-            // If offerCourseDetails document exists, add new course IDs
             offerCourseDetails.courses.push(...savedOfferCourseIds);
         }
 
-        // Save the offerCourseDetails document
         await offerCourseDetails.save();
-
-        // Update semester document by pushing the new offer course's ID if it's newly created
         await Semester.findByIdAndUpdate(
             semester,
             { $addToSet: { offerCourses: offerCourseDetails._id } },
             { new: true }
         );
 
-        // Prepare success message
         let message = 'All courses added successfully';
         if (skippedCourses.length > 0) {
             message = `Some courses were skipped as they already exist: ${skippedCourses.join(', ')}`;
         }
-
-        // Respond with success message and saved offer courses
         res.status(200).json({
             status: 'success',
             data: {
@@ -97,6 +81,7 @@ exports.offerCourse = catchAsync(async (req, res, next) => {
     }
 });
 
+// get offerCourses By semester and department (Admin Access)
 exports.getOfferCourses = catchAsync(async (req, res, next) => {
     const {semesterId, departmentId} = req.query;
     const offerCourseDetails = await OfferCourseDetails.findOne({
@@ -121,6 +106,8 @@ exports.getOfferCourses = catchAsync(async (req, res, next) => {
         courses: offerCourseDetails.courses
     });
 })
+
+// delete offerCourses
 exports.deleteOfferCourse = catchAsync(async (req, res, next) => {
     const { departmentId, semesterId, courseId } = req.query;
 
@@ -159,4 +146,3 @@ exports.deleteOfferCourse = catchAsync(async (req, res, next) => {
         });
     }
 });
-

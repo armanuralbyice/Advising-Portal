@@ -20,15 +20,16 @@ const updateIsActiveField = require('././middleware/advisingScheduleFieldsUpdate
 const app = express()
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Authorization', 'Content-Type']
+}));
+// app.use(cors())
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
-// app.use(cors(
-//     {
-//         origin: ["advising-portal-flax.vercel.app"],
-//         methods: ["GET", "POST", "PUT", "DELETE"],
-//         credentials: true
-//     }
+
 // ));
 cron.schedule('* * * * *', updateIsActiveField);
 

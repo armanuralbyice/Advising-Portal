@@ -105,6 +105,9 @@ form .fields .input-field {
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 5px;
+    margin-top: 5px;
+    align-items: center;
+    padding: 10px;
 }
 .title h2{
     margin-left: 10px;

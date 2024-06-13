@@ -43,7 +43,7 @@ const Header = ({ isSidebarClosed, toggleSidebar }) => {
                     </Link>
                     <ul className="sub-menu blank">
                         <li>
-                            <Link to='/' className="link_name">
+                            <Link to='/dashboard' className="link_name">
                                 Home
                             </Link>
                         </li>
@@ -111,6 +111,32 @@ const Header = ({ isSidebarClosed, toggleSidebar }) => {
                     </ul>
                 </li>
                 <li>
+                    <Link to='/advising'>
+                        <i><FontAwesomeIcon icon={faUsersGear}/></i>
+                        <span className="link_name">Advising</span>
+                    </Link>
+                    <ul className="sub-menu blank">
+                        <li>
+                            <Link to='/users' className="link_name">
+                                Advising
+                            </Link>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <Link to='/faculty/show-enroll-course'>
+                        <i><FontAwesomeIcon icon={faUsersGear}/></i>
+                        <span className="link_name">Faculty Course List</span>
+                    </Link>
+                    <ul className="sub-menu blank">
+                        <li>
+                            <Link to='/faculty/show-enroll-course' className="link_name">
+                                Faculty Course List
+                            </Link>
+                        </li>
+                    </ul>
+                </li>
+                <li>
                     <Link to='/users'>
                         <i><FontAwesomeIcon icon={faUsersGear}/></i>
                         <span className="link_name">Users</span>
@@ -123,6 +149,7 @@ const Header = ({ isSidebarClosed, toggleSidebar }) => {
                         </li>
                     </ul>
                 </li>
+
             </ul>
         </div>
     );

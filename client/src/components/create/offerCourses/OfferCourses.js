@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import {toast} from "react-toastify";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCirclePlus, faPenToSquare, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faCirclePlus, faTrash} from "@fortawesome/free-solid-svg-icons";
 
 const OfferCourses = ({ isSidebarClosed }) => {
     const [semesters, setSemesters] = useState([]);
@@ -183,7 +183,7 @@ const OfferCourses = ({ isSidebarClosed }) => {
         const dataToSend = {
             semester: selectedSemester,
             department: selectedDepartment,
-            courses: offerCourses
+            courses: [...offerCourses]
         };
 
         try {
@@ -195,6 +195,7 @@ const OfferCourses = ({ isSidebarClosed }) => {
             toast.error("Error offering courses!");
         }
     };
+
 
 
     return (

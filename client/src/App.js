@@ -13,7 +13,11 @@ import Course from "./components/create/Course";
 import OfferCourses from "./components/create/offerCourses/OfferCourses";
 import Classroom from "./components/create/Classroom";
 import Login from "./components/login/Login";
-import ShowOfferCourses from "./components/show offer courses/ShowOfferCourses";
+import ShowOfferCourses from "./components/show courses/ShowOfferCourses";
+import ShowFacultyEnrollCourses from "./components/show courses/ShowFacultyEnrollCourses";
+import {AuthProvider} from "./components/router/AuthProvider";
+import PrivateRoute from "./components/router/PrivateRoute";
+import AdvisingCourse from "./components/Advising/AdvisingCourse";
 
 function App() {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
@@ -36,14 +40,15 @@ function App() {
         <Router>
           <Routes>
             <Route path="/login" element={<Login/>} />
-            <Route path="/" element={(<><Header
+            <Route element={(<><Header
                 toggleSubMenu={toggleSubMenu}
                 toggleSidebar={toggleSidebar}
                 handleDropdownClick={handleDropdownClick}
                 isSubMenuOpen={isSubMenuOpen}
                 isSidebarClosed={isSidebarClosed}
             /><Outlet /></>)}>
-              <Route path="/" element={<Home isSidebarClosed={isSidebarClosed}/>} />
+              <Route path="/dashboard" element={<PrivateRoute><Home isSidebarClosed={isSidebarClosed}/></PrivateRoute>} />
+              <Route path="/" element={<PrivateRoute><Home isSidebarClosed={isSidebarClosed}/></PrivateRoute>} />
               <Route path="/student/registation" element={<Student isSidebarClosed={isSidebarClosed}/>} />
               <Route path="/faculty/registation" element={<Faculty isSidebarClosed={isSidebarClosed}/>} />
               <Route path="/admin/registation" element={<Admin isSidebarClosed={isSidebarClosed}/>} />
@@ -54,6 +59,8 @@ function App() {
               <Route path="/create/offerCourse" element={<OfferCourses isSidebarClosed={isSidebarClosed}/>} />
               <Route path="/create/classroom" element={<Classroom isSidebarClosed={isSidebarClosed}/>} />
               <Route path="/showOfferCourses" element={<ShowOfferCourses isSidebarClosed={isSidebarClosed}/>} />
+              <Route path="/faculty/show-enroll-course" element={<PrivateRoute><ShowFacultyEnrollCourses isSidebarClosed={isSidebarClosed}/></PrivateRoute>} />
+              <Route path="/advising" element={<PrivateRoute><AdvisingCourse isSidebarClosed={isSidebarClosed}/></PrivateRoute>} />
             </Route>
           </Routes>
         </Router>

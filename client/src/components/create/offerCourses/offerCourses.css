@@ -63,12 +63,12 @@ form{
 .course-list-box{
     height: 530px;
     width: 100%;
-    overflow: scroll;
+    overflow-y: scroll;
 
-}.course-list-box table{
+}
+.course-list-box table{
     width: 100%;
     border-collapse: collapse;
-    overflow-y: scroll;
 }
 .course-list-box th{
     text-align: center;

@@ -1,4 +1,5 @@
 import axios from "axios";
+import {toast} from "react-toastify";
 
 export const fetchSemesterData = async () => {
     try {
@@ -56,3 +57,90 @@ export const fetchOfferCourses = async (semesterId, departmentId) =>{
         return []
     }
 }
+
+export const facultyCourseListBySemester = async (selectedSemester) => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('No token found in localStorage');
+            return [];
+        }
+        const headers = { Authorization: `Bearer ${token}` };
+
+        const response = await axios.get(`http://localhost:4000/api/v7/faculty-course-list/${selectedSemester}`, {
+            headers,
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+           toast.warning(error.response.data.message);
+        } else {
+            console.error('Error message:', error.message);
+        }
+        return [];
+    }
+};
+
+export const studentListByCourse = async (selectedSemester, selectedCourse) => {
+    try {
+        const response = await axios.get(`http://localhost:4000/api/v7/faculty-course-list/${selectedCourse}/${selectedSemester}`)
+        return response.data;
+    }
+    catch (error) {
+        if (error.response) {
+            if(error.response.status === 404){
+                toast.warning(error.response.data.message);
+            }
+        } else {
+            console.error('Error message:', error.message);
+        }
+        return [];
+    }
+}
+export const fetchOfferCoursesForAdvising = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        };
+        const response = await axios.get('http://localhost:4000/api/v7/advising/offerCourses', config);
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            if (error.response.status === 404) {
+                toast.warning(error.response.data.message);
+            } else if (error.response.status === 401) {
+                toast.error('Unauthorized access. Please log in again.');
+            }
+        } else {
+            console.error('Error message:', error.message);
+        }
+        return [];
+    }
+};
+export const fetchAdvisingCourses = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        };
+        const response = await axios.get('http://localhost:4000/api/v7/advising/course', config);
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            if (error.response.status === 404) {
+                toast.warning(error.response.data.message);
+            } else if (error.response.status === 401) {
+                toast.error('Unauthorized access. Please log in again.');
+            }
+        } else {
+            console.error('Error message:', error.message);
+        }
+        return [];
+    }
+};
