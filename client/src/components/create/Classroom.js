@@ -77,7 +77,7 @@ const Classroom = ({ isSidebarClosed }) => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`https://advising-portal-ikf1.vercel.app/v6/classroom/delete/${id}`);
+            await axios.delete(`https://advising-portal-zzm8.vercel.app/api/v6/classroom/delete/${id}`);
             setClassrooms(classrooms.filter(classroom => classroom._id !== id));
             toast.success('Semester deleted successfully');
         } catch (error) {

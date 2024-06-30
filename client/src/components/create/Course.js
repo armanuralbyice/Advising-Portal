@@ -56,7 +56,7 @@ const Course = ({isSidebarClosed}) => {
 
         // If a department is selected, update the URL to fetch filtered courses
         if (selectedDepartment) {
-            url = `https://advising-portal-ikf1.vercel.app/api/v4/courses/filter?department=${selectedDepartment}`;
+            url = `https://advising-portal-zzm8.vercel.app/api/v4/courses/filter?department=${selectedDepartment}`;
         }
 
         axios

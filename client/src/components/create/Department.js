@@ -62,7 +62,7 @@ const Department = ({isSidebarClosed}) => {
     }, []);
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`https://advising-portal-ikf1.vercel.app/api/v2/department/delete/${id}`);
+            await axios.delete(`https://advising-portal-zzm8.vercel.app/api/v2/department/delete/${id}`);
             setDepartments(departments.filter(department => department._id !== id));
             toast.success('Department deleted successfully');
         } catch (error) {

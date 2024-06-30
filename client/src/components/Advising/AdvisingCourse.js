@@ -21,7 +21,7 @@ const AdvisingCourse = ({ isSidebarClosed }) => {
             }
         };
         try {
-            const response = await axios.post(`https://advising-portal-ikf1.vercel.app/api/v7/advising?courseId=${courseId}`, {}, config);
+            const response = await axios.post(`https://advising-portal-zzm8.vercel.app/api/v7/advising?courseId=${courseId}`, {}, config);
             if (response.status === 200) {
                 console.log(response.data);
                 toast.success('Course added successfully!');
@@ -80,7 +80,7 @@ const AdvisingCourse = ({ isSidebarClosed }) => {
             }
         };
         try {
-            const response = await axios.delete(`https://advising-portal-ikf1.vercel.app/api/v7/advising/course/delete/${courseId}`, config);
+            const response = await axios.delete(`https://advising-portal-zzm8.vercel.app/api/v7/advising/course/delete/${courseId}`, config);
             if (response.status === 200) {
                 toast.success(response.data.message);
                 await fetchCourseList();

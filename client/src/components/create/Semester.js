@@ -20,7 +20,7 @@ const Semester = ({ isSidebarClosed }) => {
     const handleSemesterSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('https://advising-portal-ikf1.vercel.app/api/v1/create/semester', semester, {
+            .post('https://advising-portal-zzm8.vercel.app/api/v1/create/semester', semester, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

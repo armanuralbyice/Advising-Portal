@@ -23,9 +23,8 @@ const PORT = process.env.PORT || 3001
 const DB = process.env.DB
 
 app.get('/', (req, res) => {
-    res.send('Hello, World!'); // Sending a simple response
+    res.send('Hello, World!');
 });
-
 mongoose.set('strictQuery', true);
 mongoose
     .connect(DB)
