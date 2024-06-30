@@ -20,7 +20,7 @@ const Classroom = ({ isSidebarClosed }) => {
     const handleSemesterSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('https://advising-portal-server-side.vercel.app/api/v6/create/classroom', classroom, {
+            .post('https://advising-portal-ikf1.vercel.app/api/v6/create/classroom', classroom, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -62,7 +62,7 @@ const Classroom = ({ isSidebarClosed }) => {
     const displayedClassrooms = classrooms ? classrooms.slice(indexOfFirstItem, indexOfLastItem) : [];
     const fetchClassrooms = () => {
         axios
-            .get('https://advising-portal-server-side.vercel.app/api/v6/classroom/all')
+            .get('https://advising-portal-ikf1.vercel.app/api/v6/classroom/all')
             .then((res) => {
                 setClassrooms(res.data.classrooms);
             })
@@ -77,7 +77,7 @@ const Classroom = ({ isSidebarClosed }) => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`https://advising-portal-server-side.vercel.app/api/v6/classroom/delete/${id}`);
+            await axios.delete(`https://advising-portal-ikf1.vercel.app/v6/classroom/delete/${id}`);
             setClassrooms(classrooms.filter(classroom => classroom._id !== id));
             toast.success('Semester deleted successfully');
         } catch (error) {

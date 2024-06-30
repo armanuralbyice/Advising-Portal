@@ -3,7 +3,7 @@ import {toast} from "react-toastify";
 
 export const fetchSemesterData = async () => {
     try {
-        const res = await axios.get('https://advising-portal-server-side.vercel.app/api/v1/semesters/all');
+        const res = await axios.get('https://advising-portal-ikf1.vercel.app/api/v1/semesters/all');
         return res.data;
     }catch (err){
         console.error(err);
@@ -12,7 +12,7 @@ export const fetchSemesterData = async () => {
 }
 export const fetchDepartmentData = async ()=>{
     try {
-        const res = await axios.get('https://advising-portal-server-side.vercel.app/api/v2/departments/all')
+        const res = await axios.get('https://advising-portal-ikf1.vercel.app/api/v2/departments/all')
         return res.data
     }catch (err){
         console.log(err)
@@ -21,7 +21,7 @@ export const fetchDepartmentData = async ()=>{
 }
 export const fetchClassRooms = async () =>{
     try{
-        const res = await axios.get('https://advising-portal-server-side.vercel.app/api/v6/classroom/all');
+        const res = await axios.get('https://advising-portal-ikf1.vercel.app/api/v6/classroom/all');
         return res.data
     }catch (err){
         console.log(err)
@@ -31,7 +31,7 @@ export const fetchClassRooms = async () =>{
 
 export const fetchCourses = async (selectedDepartment) =>{
     try {
-        const res = await axios.get(`https://advising-portal-server-side.vercel.app/api/v4/courses/filter?department=${selectedDepartment}`)
+        const res = await axios.get(`https://advising-portal-ikf1.vercel.app/api/v4/courses/filter?department=${selectedDepartment}`)
         return res.data;
     }catch (err){
         console.log(err);
@@ -40,7 +40,7 @@ export const fetchCourses = async (selectedDepartment) =>{
 }
 export const fetchFaculties = async (selectedDepartment) => {
     try{
-        const res = await axios.get(`https://advising-portal-server-side.vercel.app/api/v3/department/${selectedDepartment}/faculties`)
+        const res = await axios.get(`https://advising-portal-ikf1.vercel.app/api/v3/department/${selectedDepartment}/faculties`)
         return res.data
     }catch (err){
         console.log(err)
@@ -50,7 +50,7 @@ export const fetchFaculties = async (selectedDepartment) => {
 
 export const fetchOfferCourses = async (semesterId, departmentId) =>{
     try {
-        const res = await axios.get (`https://advising-portal-server-side.vercel.app/api/v5/get/offerCourses?semesterId=${semesterId}&departmentId=${departmentId}`)
+        const res = await axios.get (`https://advising-portal-ikf1.vercel.app/api/v5/get/offerCourses?semesterId=${semesterId}&departmentId=${departmentId}`)
         return res.data
     }catch (err){
         console.log(err)
@@ -67,7 +67,7 @@ export const facultyCourseListBySemester = async (selectedSemester) => {
         }
         const headers = { Authorization: `Bearer ${token}` };
 
-        const response = await axios.get(`https://advising-portal-server-side.vercel.app/api/v7/faculty-course-list/${selectedSemester}`, {
+        const response = await axios.get(`https://advising-portal-ikf1.vercel.app/api/v7/faculty-course-list/${selectedSemester}`, {
             headers,
             withCredentials: true,
         });
@@ -84,7 +84,7 @@ export const facultyCourseListBySemester = async (selectedSemester) => {
 
 export const studentListByCourse = async (selectedSemester, selectedCourse) => {
     try {
-        const response = await axios.get(`https://advising-portal-server-side.vercel.app/api/v7/faculty-course-list/${selectedCourse}/${selectedSemester}`)
+        const response = await axios.get(`https://advising-portal-ikf1.vercel.app/api/v7/faculty-course-list/${selectedCourse}/${selectedSemester}`)
         return response.data;
     }
     catch (error) {
@@ -106,7 +106,7 @@ export const fetchOfferCoursesForAdvising = async () => {
                 'Authorization': `Bearer ${token}`
             }
         };
-        const response = await axios.get('https://advising-portal-server-side.vercel.app/api/v7/advising/offerCourses', config);
+        const response = await axios.get('https://advising-portal-ikf1.vercel.app/api/v7/advising/offerCourses', config);
         return response.data;
     } catch (error) {
         if (error.response) {
@@ -129,7 +129,7 @@ export const fetchAdvisingCourses = async () => {
                 'Authorization': `Bearer ${token}`
             }
         };
-        const response = await axios.get('https://advising-portal-server-side.vercel.app/api/v7/advising/course', config);
+        const response = await axios.get('https://advising-portal-ikf1.vercel.app/api/v7/advising/course', config);
         return response.data;
     } catch (error) {
         if (error.response) {
