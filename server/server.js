@@ -11,7 +11,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cors({
-    origin: 'https://advising-portal-two.vercel.app',
+    origin: 'https://advising-portal-two.vercel.app/',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Authorization', 'Content-Type']
@@ -21,10 +21,6 @@ app.use(cookieParser());
 
 const PORT = process.env.PORT || 3001
 const DB = process.env.DB
-
-app.get('/', (req, res) => {
-    res.send('Hello, World!'); // Sending a simple response
-});
 
 mongoose.set('strictQuery', true);
 mongoose
