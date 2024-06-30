@@ -18,7 +18,7 @@ const Department = ({isSidebarClosed}) => {
     const handleDepartmentSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('http://localhost:4000/api/v2/create/department', department, {
+            .post('https://advising-portal-server-side.vercel.app/api/v2/create/department', department, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -44,7 +44,7 @@ const Department = ({isSidebarClosed}) => {
     };
     const fetchDepartments = () => {
         axios
-            .get('http://localhost:4000/api/v2/departments/all')
+            .get('https://advising-portal-server-side.vercel.app/api/v2/departments/all')
             .then((res) => {
                 setDepartments(res.data.department);
             })
@@ -62,7 +62,7 @@ const Department = ({isSidebarClosed}) => {
     }, []);
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:4000/api/v2/department/delete/${id}`);
+            await axios.delete(`https://advising-portal-server-side.vercel.app/api/v2/department/delete/${id}`);
             setDepartments(departments.filter(department => department._id !== id));
             toast.success('Department deleted successfully');
         } catch (error) {

@@ -18,7 +18,7 @@ const Course = ({isSidebarClosed}) => {
     const handleCourseSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('http://localhost:4000/api/v4/course/add', course, {
+            .post('https://advising-portal-server-side.vercel.app/api/v4/course/add', course, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -41,7 +41,7 @@ const Course = ({isSidebarClosed}) => {
     const [departments, setDepartments] = useState([]);
     const fetchDepartments = () => {
         axios
-            .get('http://localhost:4000/api/v2/departments/all')
+            .get('https://advising-portal-server-side.vercel.app/api/v2/departments/all')
             .then((res) => {
                 setDepartments(res.data.department);
             })
@@ -52,11 +52,11 @@ const Course = ({isSidebarClosed}) => {
 
     const [courses, setCourses] = useState([]);
     const fetchCourses = () => {
-        let url = 'http://localhost:4000/api/v4/courses';
+        let url = 'https://advising-portal-server-side.vercel.app/api/v4/courses';
 
         // If a department is selected, update the URL to fetch filtered courses
         if (selectedDepartment) {
-            url = `http://localhost:4000/api/v4/courses/filter?department=${selectedDepartment}`;
+            url = `https://advising-portal-server-side.vercel.app/api/v4/courses/filter?department=${selectedDepartment}`;
         }
 
         axios

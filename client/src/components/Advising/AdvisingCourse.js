@@ -21,7 +21,7 @@ const AdvisingCourse = ({ isSidebarClosed }) => {
             }
         };
         try {
-            const response = await axios.post(`http://localhost:4000/api/v7/advising?courseId=${courseId}`, {}, config);
+            const response = await axios.post(`https://advising-portal-server-side.vercel.app/api/v7/advising?courseId=${courseId}`, {}, config);
             if (response.status === 200) {
                 console.log(response.data);
                 toast.success('Course added successfully!');
