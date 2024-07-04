@@ -4,78 +4,78 @@ const jwt = require("jsonwebtoken");
 const Department = require("../departmentModel/departmentSchema");
 
 const facultySchema = new mongoose.Schema({
-    facultyID:{
-        type:String
+    facultyID: {
+        type: String
     },
-    name:{
+    name: {
         type: String,
         required: true
     },
-    email:{
+    email: {
         type: String,
-        unique:true,
+        unique: true,
         required: true,
         trim: true
     },
-    phone:{
+    phone: {
         type: String,
-        required:true,
+        required: true,
         trim: true
     },
-    gender:{
+    gender: {
         type: String,
         required: true
     },
-    address:{
-        presentAddress:{
-            district:{
+    address: {
+        presentAddress: {
+            district: {
                 type: String,
-                required:true
+                required: true
             },
-            thana:{
+            thana: {
                 type: String,
-                required:true
+                required: true
             },
-            postCode:{
+            postCode: {
                 type: String,
-                required:true
+                required: true
             }
         },
-        permanentAddress:{
-            district:{
+        permanentAddress: {
+            district: {
                 type: String,
-                required:true
+                required: true
             },
-            thana:{
+            thana: {
                 type: String,
-                required:true
+                required: true
             },
-            postCode:{
+            postCode: {
                 type: String,
-                required:true
+                required: true
             }
         }
     },
-    password:{
+    password: {
         type: String,
         select: false
     },
-    role:{
+    role: {
         type: String,
         default: 'faculty'
     },
-    department:{
+    department: {
         type: mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref:'Department'
+        required: true,
+        ref: 'Department'
     },
     dateOfBirth: {
         type: String,
-        match:/^\d{4}-\d{2}-\d{2}$/,
-        required:true
+        match: /^\d{4}-\d{2}-\d{2}$/,
+        required: true
     },
 })
-facultySchema.pre('save', async function(next){
+facultySchema.pre('save', async function (next) {
     if (this.role) {
         const departmentMap = {
             'CSE': '50',
@@ -104,12 +104,12 @@ facultySchema.pre('save', async function(next){
     next()
 
 })
-facultySchema.methods.comparePassword = async function(enterPassword){
+facultySchema.methods.comparePassword = async function (enterPassword) {
     const hashedPassword = this.password || ''
     return await bcrypt.compare(enterPassword, hashedPassword);
 }
-facultySchema.methods.getJwtToken = async function(){
-    return await jwt.sign({id: this._id}, process.env.JWT_SECRET, {
+facultySchema.methods.getJwtToken = async function () {
+    return await jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
     })
 }

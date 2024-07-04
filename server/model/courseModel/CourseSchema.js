@@ -1,19 +1,19 @@
 const mongoose = require('mongoose')
 
 const courseSchema = new mongoose.Schema({
-    courseCode:{
+    courseCode: {
         type: String,
-        required:true,
-        unique:true
+        required: true,
+        unique: true
     },
-    department:{
+    department: {
         type: mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref:'Department'
+        required: true,
+        ref: 'Department'
     },
-    credit:{
+    credit: {
         type: String,
-        required:true
+        required: true
     },
 
 })

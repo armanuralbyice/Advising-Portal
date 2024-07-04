@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import '../user/users.css';
 import MetaData from '../../components/layout/MetaData';
 import axios from 'axios';
@@ -8,8 +8,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import Pagination from "@mui/material/Pagination";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Semester = ({ isSidebarClosed }) => {
     const [semester, setSemester] = useState({
@@ -20,7 +20,7 @@ const Semester = ({ isSidebarClosed }) => {
     const handleSemesterSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('https://advising-portal-zzm8.vercel.app/api/v1/create/semester', semester, {
+            .post('http://localhost:4000/api/v1/create/semester', semester, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -50,7 +50,7 @@ const Semester = ({ isSidebarClosed }) => {
     const currentYear = new Date().getFullYear();
     const years = [];
     for (let year = currentYear; year <= currentYear + 10; year++) {
-        years.push(year+1);
+        years.push(year + 1);
     }
     // for pagination
     const [page, setPage] = useState(1);
@@ -69,7 +69,7 @@ const Semester = ({ isSidebarClosed }) => {
     const displayedSemesters = semesters ? semesters.slice(indexOfFirstItem, indexOfLastItem) : [];
     const fetchSemesters = () => {
         axios
-            .get('https://advising-portal-ikf1.vercel.app/api/v1/semesters/all')
+            .get('http://localhost:4000/api/v1/semesters/all')
             .then((res) => {
                 setSemesters(res.data.semester);
             })
@@ -84,7 +84,7 @@ const Semester = ({ isSidebarClosed }) => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`https://advising-portal-ikf1.vercel.app/api/v1/semester/delete/${id}`);
+            await axios.delete(`http://localhost:4000/api/v1/semester/delete/${id}`);
             setSemesters(semesters.filter(semester => semester._id !== id));
             toast.success('Semester deleted successfully');
         } catch (error) {
@@ -143,41 +143,41 @@ const Semester = ({ isSidebarClosed }) => {
                         <div className='table'>
                             <table className="fl-table">
                                 <thead>
-                                <tr>
-                                    <th>Season</th>
-                                    <th>Year</th>
-                                    <th>Action</th>
-                                </tr>
+                                    <tr>
+                                        <th>Season</th>
+                                        <th>Year</th>
+                                        <th>Action</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {displayedSemesters && displayedSemesters.length > 0 ? (
-                                    displayedSemesters.map((semester, index) => (
-                                        <tr key={index}>
-                                            <td>{semester.season}</td>
-                                            <td>{semester.year}</td>
-                                            <td onClick={()=>handleDelete(semester._id)}><FontAwesomeIcon icon={faTrash} /></td>
+                                    {displayedSemesters && displayedSemesters.length > 0 ? (
+                                        displayedSemesters.map((semester, index) => (
+                                            <tr key={index}>
+                                                <td>{semester.season}</td>
+                                                <td>{semester.year}</td>
+                                                <td onClick={() => handleDelete(semester._id)}><FontAwesomeIcon icon={faTrash} /></td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4">No Semester found!</td>
                                         </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="4">No Semester found!</td>
-                                    </tr>
-                                )}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
                         <div className='pagination-box'>
                             <div>
                                 <Pagination
-                                            color="primary"
-                                            count={semesters ? Math.ceil(semesters.length / rowsPerPage) : 0}
-                                            page={page}
-                                            onChange={handleChangePage}
-                                            rowsPerPage={rowsPerPage}
-                                            onChangeRowsPerPage={handleChangeRowsPerPage}
+                                    color="primary"
+                                    count={semesters ? Math.ceil(semesters.length / rowsPerPage) : 0}
+                                    page={page}
+                                    onChange={handleChangePage}
+                                    rowsPerPage={rowsPerPage}
+                                    onChangeRowsPerPage={handleChangeRowsPerPage}
                                 />
                             </div>
-                            <div style={{'marginLeft':'20px'}}>
+                            <div style={{ 'marginLeft': '20px' }}>
                                 <FormControl>
                                     <InputLabel htmlFor="rowsPerPage">Rows Per Page</InputLabel>
                                     <Select className='formControl'

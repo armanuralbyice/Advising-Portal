@@ -3,89 +3,89 @@ const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
 const Department = require("../departmentModel/departmentSchema");
 const studentSchema = new mongoose.Schema({
-    studentID:{
-        type:String
+    studentID: {
+        type: String
     },
-    name:{
+    name: {
         type: String,
         required: true
     },
-    email:{
+    email: {
         type: String,
-        unique:true,
+        unique: true,
         required: true,
         trim: true
     },
-    phone:{
+    phone: {
         type: String,
-        required:true,
+        required: true,
         trim: true
     },
-    gender:{
+    gender: {
         type: String,
         required: true
     },
-    address:{
-        presentAddress:{
-            district:{
+    address: {
+        presentAddress: {
+            district: {
                 type: String,
-                required:true
+                required: true
             },
-            thana:{
+            thana: {
                 type: String,
-                required:true
+                required: true
             },
-            postCode:{
+            postCode: {
                 type: String,
-                required:true
+                required: true
             }
         },
-        permanentAddress:{
-            district:{
+        permanentAddress: {
+            district: {
                 type: String,
-                required:true
+                required: true
             },
-            thana:{
+            thana: {
                 type: String,
-                required:true
+                required: true
             },
-            postCode:{
+            postCode: {
                 type: String,
-                required:true
+                required: true
             }
         }
     },
-    role:{
+    role: {
         type: String,
         default: 'student'
     },
-    department:{
+    department: {
         type: mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref:'Department'
+        required: true,
+        ref: 'Department'
     },
     dateOfBirth: {
         type: Date,
-        match:/^\d{4}-\d{2}-\d{2}$/,
-        required:true
+        match: /^\d{4}-\d{2}-\d{2}$/,
+        required: true
     },
-    semester:{
+    semester: {
         type: mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref:'Semester'
+        required: true,
+        ref: 'Semester'
     },
-    password:{
+    password: {
         type: String,
         select: false,
     }
 })
-studentSchema.pre('save', async function(next){
-    if(this.role){
+studentSchema.pre('save', async function (next) {
+    if (this.role) {
         const year = new Date().getFullYear().toString()
-        const semesterMap ={
-            'spring':'1',
-            'summer':'2',
-            'fall':'3'
+        const semesterMap = {
+            'spring': '1',
+            'summer': '2',
+            'fall': '3'
         }
         const semesterPart = semesterMap[this['semester']] || '1'
         const departmentMap = {
@@ -111,18 +111,18 @@ studentSchema.pre('save', async function(next){
         // Create the full student ID
         this.studentID = `${year}${semesterPart}${departmentPart}${serialPart}`;
     }
-    else{
+    else {
         this.studentID = null;
     }
     next()
 })
-studentSchema.methods.comparePassword = async function(enterPassword){
+studentSchema.methods.comparePassword = async function (enterPassword) {
     const hashedPassword = this.password || ''
     return await bcrypt.compare(enterPassword, hashedPassword);
 }
 
-studentSchema.methods.getJwtToken = async function(){
-    return await jwt.sign({id: this._id}, process.env.JWT_SECRET, {
+studentSchema.methods.getJwtToken = async function () {
+    return await jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
     })
 }

@@ -21,7 +21,7 @@ const AdvisingCourse = ({ isSidebarClosed }) => {
             }
         };
         try {
-            const response = await axios.post(`https://advising-portal-zzm8.vercel.app/api/v7/advising?courseId=${courseId}`, {}, config);
+            const response = await axios.post(`http://localhost:4000/api/v7/advising?courseId=${courseId}`, {}, config);
             if (response.status === 200) {
                 console.log(response.data);
                 toast.success('Course added successfully!');
@@ -80,7 +80,7 @@ const AdvisingCourse = ({ isSidebarClosed }) => {
             }
         };
         try {
-            const response = await axios.delete(`https://advising-portal-zzm8.vercel.app/api/v7/advising/course/delete/${courseId}`, config);
+            const response = await axios.delete(`http://localhost:4000/api/v7/advising/course/delete/${courseId}`, config);
             if (response.status === 200) {
                 toast.success(response.data.message);
                 await fetchCourseList();
@@ -102,29 +102,29 @@ const AdvisingCourse = ({ isSidebarClosed }) => {
                     <div className='course-list'>
                         <table>
                             <thead>
-                            <tr>
-                                <th>Course Code</th>
-                                <th>Section</th>
-                                <th>Class Time</th>
-                                <th>Class Room</th>
-                                <th>Lab Time</th>
-                                <th>Lab Room</th>
-                                <th>Available Seat</th>
-                            </tr>
+                                <tr>
+                                    <th>Course Code</th>
+                                    <th>Section</th>
+                                    <th>Class Time</th>
+                                    <th>Class Room</th>
+                                    <th>Lab Time</th>
+                                    <th>Lab Room</th>
+                                    <th>Available Seat</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {courseDetails.map(course => (
-                                <tr key={course._id} onClick={(e) => handleAddCourse(e, course._id)}
-                                    style={{cursor: 'pointer'}}>
-                                    <td>{course.courseName.courseCode}</td>
-                                    <td>{course.section}</td>
-                                    <td>{course.classTime}</td>
-                                    <td>{`${course.classRoom.building}-${course.classRoom.classroomNo}`}</td>
-                                    <td>{course.labTime}</td>
-                                    <td>{`${course.classRoom.building}-${course.classRoom.classroomNo}`}</td>
-                                    <td>{course.seat}</td>
-                                </tr>
-                            ))}
+                                {courseDetails.map(course => (
+                                    <tr key={course._id} onClick={(e) => handleAddCourse(e, course._id)}
+                                        style={{ cursor: 'pointer' }}>
+                                        <td>{course.courseName.courseCode}</td>
+                                        <td>{course.section}</td>
+                                        <td>{course.classTime}</td>
+                                        <td>{`${course.classRoom.building}-${course.classRoom.classroomNo}`}</td>
+                                        <td>{course.labTime}</td>
+                                        <td>{`${course.classRoom.building}-${course.classRoom.classroomNo}`}</td>
+                                        <td>{course.seat}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -137,31 +137,31 @@ const AdvisingCourse = ({ isSidebarClosed }) => {
                         </div>
                         <table>
                             <thead>
-                            <tr>
-                                <th>Course Code</th>
-                                <th>Section</th>
-                                <th>Class Time</th>
-                                <th>Class Room</th>
-                                <th>Lab Time</th>
-                                <th>Lab Room</th>
-                                <th>Action</th>
-                            </tr>
+                                <tr>
+                                    <th>Course Code</th>
+                                    <th>Section</th>
+                                    <th>Class Time</th>
+                                    <th>Class Room</th>
+                                    <th>Lab Time</th>
+                                    <th>Lab Room</th>
+                                    <th>Action</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {enrollCourses.map(enrollCourse => (
-                                <tr key={enrollCourse._id}>
-                                    <td>{enrollCourse.course.courseName.courseCode}</td>
-                                    <td>{enrollCourse.course.section}</td>
-                                    <td>{enrollCourse.course.classTime}</td>
-                                    <td>{`${enrollCourse.course.classRoom.building}-${enrollCourse.course.classRoom.classroomNo}`}</td>
-                                    <td>{enrollCourse.course.labTime}</td>
-                                    <td>{`${enrollCourse.course.classRoom.building}-${enrollCourse.course.classRoom.classroomNo}`}</td>
-                                    <td style={{fontSize: '20px', justifyContent: 'space-around'}}>
-                                        <FontAwesomeIcon icon={faTrash}
-                                                         onClick={() => handleDelete(enrollCourse.course._id)}/>
-                                    </td>
-                                </tr>
-                            ))}
+                                {enrollCourses.map(enrollCourse => (
+                                    <tr key={enrollCourse._id}>
+                                        <td>{enrollCourse.course.courseName.courseCode}</td>
+                                        <td>{enrollCourse.course.section}</td>
+                                        <td>{enrollCourse.course.classTime}</td>
+                                        <td>{`${enrollCourse.course.classRoom.building}-${enrollCourse.course.classRoom.classroomNo}`}</td>
+                                        <td>{enrollCourse.course.labTime}</td>
+                                        <td>{`${enrollCourse.course.classRoom.building}-${enrollCourse.course.classRoom.classroomNo}`}</td>
+                                        <td style={{ fontSize: '20px', justifyContent: 'space-around' }}>
+                                            <FontAwesomeIcon icon={faTrash}
+                                                onClick={() => handleDelete(enrollCourse.course._id)} />
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

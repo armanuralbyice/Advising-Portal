@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import MetaData from "../layout/MetaData";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Pagination from "@mui/material/Pagination";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
-const Department = ({isSidebarClosed}) => {
+const Department = ({ isSidebarClosed }) => {
     const [department, setDepartment] = useState({
         name: ''
     })
@@ -18,7 +18,7 @@ const Department = ({isSidebarClosed}) => {
     const handleDepartmentSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('https://advising-portal-ikf1.vercel.app/api/v2/create/department', department, {
+            .post('http://localhost:4000/api/v2/create/department', department, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -44,7 +44,7 @@ const Department = ({isSidebarClosed}) => {
     };
     const fetchDepartments = () => {
         axios
-            .get('https://advising-portal-ikf1.vercel.app/api/v2/departments/all')
+            .get('http://localhost:4000/api/v2/departments/all')
             .then((res) => {
                 setDepartments(res.data.department);
             })
@@ -62,7 +62,7 @@ const Department = ({isSidebarClosed}) => {
     }, []);
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`https://advising-portal-zzm8.vercel.app/api/v2/department/delete/${id}`);
+            await axios.delete(`http://localhost:4000/api/v2/department/delete/${id}`);
             setDepartments(departments.filter(department => department._id !== id));
             toast.success('Department deleted successfully');
         } catch (error) {
@@ -86,7 +86,7 @@ const Department = ({isSidebarClosed}) => {
     const displayedDepartments = departments ? departments.slice(indexOfFirstItem, indexOfLastItem) : [];
     return (
         <div className={`home-section ${isSidebarClosed ? 'sidebar-close' : ''}`}>
-            <MetaData title={'Create Department'}/>
+            <MetaData title={'Create Department'} />
             <div className="home-content">
                 <div className='title'>
                     <h2>Create Department</h2>
@@ -117,27 +117,27 @@ const Department = ({isSidebarClosed}) => {
                         <div className='table'>
                             <table className="fl-table">
                                 <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Create At</th>
-                                    <th>Action</th>
-                                </tr>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Create At</th>
+                                        <th>Action</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {displayedDepartments && displayedDepartments.length > 0 ? (
-                                    displayedDepartments.map((department, index) => (
-                                        <tr key={index}>
-                                            <td>{department.name}</td>
-                                            <td>{new Date(department.createAt).toDateString()}</td>
-                                            <td onClick={() => handleDelete(department._id)}><FontAwesomeIcon
-                                                icon={faTrash}/></td>
+                                    {displayedDepartments && displayedDepartments.length > 0 ? (
+                                        displayedDepartments.map((department, index) => (
+                                            <tr key={index}>
+                                                <td>{department.name}</td>
+                                                <td>{new Date(department.createAt).toDateString()}</td>
+                                                <td onClick={() => handleDelete(department._id)}><FontAwesomeIcon
+                                                    icon={faTrash} /></td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4">No department found!</td>
                                         </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="4">No department found!</td>
-                                    </tr>
-                                )}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -152,17 +152,17 @@ const Department = ({isSidebarClosed}) => {
                                     onChangeRowsPerPage={handleChangeRowsPerPage}
                                 />
                             </div>
-                            <div style={{'marginLeft': '20px'}}>
+                            <div style={{ 'marginLeft': '20px' }}>
                                 <FormControl>
                                     <InputLabel htmlFor="rowsPerPage">Rows Per Page</InputLabel>
                                     <Select className='formControl'
-                                            value={rowsPerPage}
-                                            label="Rows Per Page"
-                                            onChange={handleChangeRowsPerPage}
-                                            inputProps={{
-                                                name: 'rowsPerPage',
-                                                id: 'rowsPerPage',
-                                            }}
+                                        value={rowsPerPage}
+                                        label="Rows Per Page"
+                                        onChange={handleChangeRowsPerPage}
+                                        inputProps={{
+                                            name: 'rowsPerPage',
+                                            id: 'rowsPerPage',
+                                        }}
                                     >
                                         <MenuItem value={rowsPerPage}>10</MenuItem>
                                         <MenuItem value={20}>20</MenuItem>

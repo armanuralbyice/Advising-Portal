@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import MetaData from "../layout/MetaData";
 import Pagination from "@mui/material/Pagination";
 import FormControl from "@mui/material/FormControl";
@@ -6,9 +6,9 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
-const Course = ({isSidebarClosed}) => {
+const Course = ({ isSidebarClosed }) => {
     const [course, setCourse] = useState({
         courseCode: '',
         department: '',
@@ -18,7 +18,7 @@ const Course = ({isSidebarClosed}) => {
     const handleCourseSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('https://advising-portal-ikf1.vercel.app/api/v4/course/add', course, {
+            .post('http://localhost:4000/api/v4/course/add', course, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -41,7 +41,7 @@ const Course = ({isSidebarClosed}) => {
     const [departments, setDepartments] = useState([]);
     const fetchDepartments = () => {
         axios
-            .get('https://advising-portal-ikf1.vercel.app/api/v2/departments/all')
+            .get('http://localhost:4000/api/v2/departments/all')
             .then((res) => {
                 setDepartments(res.data.department);
             })
@@ -52,11 +52,11 @@ const Course = ({isSidebarClosed}) => {
 
     const [courses, setCourses] = useState([]);
     const fetchCourses = () => {
-        let url = 'https://advising-portal-ikf1.vercel.app/api/v4/courses';
+        let url = 'http://localhost:4000/api/v4/courses';
 
         // If a department is selected, update the URL to fetch filtered courses
         if (selectedDepartment) {
-            url = `https://advising-portal-zzm8.vercel.app/api/v4/courses/filter?department=${selectedDepartment}`;
+            url = `http://localhost:4000/api/v4/courses/filter?department=${selectedDepartment}`;
         }
 
         axios
@@ -101,7 +101,7 @@ const Course = ({isSidebarClosed}) => {
 
     return (
         <div className={`home-section ${isSidebarClosed ? 'sidebar-close' : ''}`}>
-            <MetaData title={'Create Course'}/>
+            <MetaData title={'Create Course'} />
             <div className="home-content">
                 <div className='title'>
                     <h2>Create Course</h2>
@@ -112,21 +112,21 @@ const Course = ({isSidebarClosed}) => {
                             <div className="fields">
                                 <div className="input-field">
                                     <label>Course Code</label>
-                                    <input style={{'width':'200px'}}
+                                    <input style={{ 'width': '200px' }}
                                         type="text"
                                         placeholder="Enter the course Code"
                                         name="courseCode"
                                         value={course.courseCode}
-                                        onChange={(e) => setCourse({...course, courseCode: e.target.value})}
+                                        onChange={(e) => setCourse({ ...course, courseCode: e.target.value })}
                                         required
                                     />
                                 </div>
                                 <div className="input-field-semester">
                                     <label>Credit</label>
-                                    <select style={{'width':'200px'}}
+                                    <select style={{ 'width': '200px' }}
                                         name="credit"
                                         value={Course.credit}
-                                        onChange={(e) => setCourse({...course, credit: e.target.value})}
+                                        onChange={(e) => setCourse({ ...course, credit: e.target.value })}
                                         required
                                     >
                                         <option value="">Select</option>
@@ -138,10 +138,10 @@ const Course = ({isSidebarClosed}) => {
                                 <div className="input-field-semester">
                                     <label>Department</label>
                                     <select
-                                        style={{'width':'200px'}}
+                                        style={{ 'width': '200px' }}
                                         name="department"
                                         value={Course.department}
-                                        onChange={(e) => setCourse({...course, department: e.target.value})}
+                                        onChange={(e) => setCourse({ ...course, department: e.target.value })}
                                         required
                                     >
                                         <option value="">Select</option>
@@ -159,14 +159,14 @@ const Course = ({isSidebarClosed}) => {
                         </form>
                     </div>
                     <div className='tableBox'>
-                        <div style={{'display':'flex','alignItems':'center','justifyContent':'space-between'}}>
+                        <div style={{ 'display': 'flex', 'alignItems': 'center', 'justifyContent': 'space-between' }}>
                             <div>
                                 <h2>Courses</h2>
                             </div>
                             <div className="input-field-semester">
                                 <label>Department</label>
                                 <select
-                                    style={{'width': '200px'}}
+                                    style={{ 'width': '200px' }}
                                     value={selectedDepartment}
                                     onChange={onFilterDepartmentChange}
                                     required
@@ -184,28 +184,28 @@ const Course = ({isSidebarClosed}) => {
                         <div className='table'>
                             <table className="fl-table">
                                 <thead>
-                                <tr>
-                                    <th>Course Code</th>
-                                    <th>Credit</th>
-                                    <th>Department</th>
-                                </tr>
+                                    <tr>
+                                        <th>Course Code</th>
+                                        <th>Credit</th>
+                                        <th>Department</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {displayedCourses && displayedCourses.length > 0 ? (
-                                    displayedCourses.map((course, index) => (
-                                        <tr key={index}>
-                                            <td>{course.courseCode}</td>
-                                            <td>{course.credit}</td>
-                                            <td>{course.department.name}</td>
-                                            {/*<td onClick={() => handleDelete(semester._id)}><FontAwesomeIcon*/}
-                                            {/*    icon={faTrash}/></td>*/}
+                                    {displayedCourses && displayedCourses.length > 0 ? (
+                                        displayedCourses.map((course, index) => (
+                                            <tr key={index}>
+                                                <td>{course.courseCode}</td>
+                                                <td>{course.credit}</td>
+                                                <td>{course.department.name}</td>
+                                                {/*<td onClick={() => handleDelete(semester._id)}><FontAwesomeIcon*/}
+                                                {/*    icon={faTrash}/></td>*/}
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4"> No Course found!</td>
                                         </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="4"> No Course found!</td>
-                                    </tr>
-                                )}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -220,17 +220,17 @@ const Course = ({isSidebarClosed}) => {
                                     onChangeRowsPerPage={handleChangeRowsPerPage}
                                 />
                             </div>
-                            <div style={{'marginLeft': '20px'}}>
+                            <div style={{ 'marginLeft': '20px' }}>
                                 <FormControl>
                                     <InputLabel htmlFor="rowsPerPage">Rows Per Page</InputLabel>
                                     <Select className='formControl'
-                                            value={rowsPerPage}
-                                            label="Rows Per Page"
-                                            onChange={handleChangeRowsPerPage}
-                                            inputProps={{
-                                                name: 'rowsPerPage',
-                                                id: 'rowsPerPage',
-                                            }}
+                                        value={rowsPerPage}
+                                        label="Rows Per Page"
+                                        onChange={handleChangeRowsPerPage}
+                                        inputProps={{
+                                            name: 'rowsPerPage',
+                                            id: 'rowsPerPage',
+                                        }}
                                     >
                                         <MenuItem value={rowsPerPage}>10</MenuItem>
                                         <MenuItem value={20}>20</MenuItem>

@@ -4,8 +4,8 @@ const Faculty = require('../model/facultyModel/facultySchema')
 const Admin = require('../model/adminModel/adminSchema')
 const Department = require('../model/departmentModel/departmentSchema')
 const catchAsync = require('../middleware/catchAsyncError')
-const {hash} = require("bcrypt");
-const ErrorHandler = require ('../utils/ErrorHandler')
+const { hash } = require("bcrypt");
+const ErrorHandler = require('../utils/ErrorHandler')
 const sendEmail = async (to, subject, html) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -29,8 +29,8 @@ exports.addStudentAndSendEmail = catchAsync(async (req, res, next) => {
     const { email, department } = req.body;
 
     try {
-        const existingDepartment = await Department.findOne({_id: department}).populate('students')
-        if(existingDepartment){
+        const existingDepartment = await Department.findOne({ _id: department }).populate('students')
+        if (existingDepartment) {
             const randomPassword = Math.random().toString(36).slice(-8);
             const hashedPassword = await hash(randomPassword, 10);
             const student = await new Student({
@@ -57,13 +57,13 @@ exports.addStudentAndSendEmail = catchAsync(async (req, res, next) => {
                 message: 'Registration successful.',
             });
         }
-        else{
-            return next (new ErrorHandler('Department not founded', 404))
+        else {
+            return next(new ErrorHandler('Department not founded', 404))
         }
     }
     catch (error) {
         console.error('Error sending email:', error);
-        return next (new ErrorHandler('Internal server error. Registration failed', 500))
+        return next(new ErrorHandler('Internal server error. Registration failed', 500))
     }
 });
 
@@ -71,8 +71,8 @@ exports.addFacultyAndSendEmail = catchAsync(async (req, res, next) => {
     const { email, department } = req.body;
 
     try {
-        const existingDepartment = await Department.findOne({_id:department}).populate('faculties')
-        if(existingDepartment){
+        const existingDepartment = await Department.findOne({ _id: department }).populate('faculties')
+        if (existingDepartment) {
             const randomPassword = Math.random().toString(36).slice(-8);
             const hashedPassword = await hash(randomPassword, 10);
             const faculty = await new Faculty({
@@ -100,7 +100,7 @@ exports.addFacultyAndSendEmail = catchAsync(async (req, res, next) => {
             });
         }
         else {
-            return next (new ErrorHandler('Department not founded', 404))
+            return next(new ErrorHandler('Department not founded', 404))
         }
 
     } catch (error) {

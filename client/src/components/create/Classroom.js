@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import '../user/users.css';
 import MetaData from '../../components/layout/MetaData';
 import axios from 'axios';
@@ -8,8 +8,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import Pagination from "@mui/material/Pagination";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Classroom = ({ isSidebarClosed }) => {
     const [classroom, setClassroom] = useState({
@@ -20,7 +20,7 @@ const Classroom = ({ isSidebarClosed }) => {
     const handleSemesterSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('https://advising-portal-ikf1.vercel.app/api/v6/create/classroom', classroom, {
+            .post('https://localhost:4000/api/v6/create/classroom', classroom, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -62,7 +62,7 @@ const Classroom = ({ isSidebarClosed }) => {
     const displayedClassrooms = classrooms ? classrooms.slice(indexOfFirstItem, indexOfLastItem) : [];
     const fetchClassrooms = () => {
         axios
-            .get('https://advising-portal-ikf1.vercel.app/api/v6/classroom/all')
+            .get('https://localhost:4000/api/v6/classroom/all')
             .then((res) => {
                 setClassrooms(res.data.classrooms);
             })
@@ -77,7 +77,7 @@ const Classroom = ({ isSidebarClosed }) => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`https://advising-portal-zzm8.vercel.app/api/v6/classroom/delete/${id}`);
+            await axios.delete(`http://localhost:4000/api/v6/classroom/delete/${id}`);
             setClassrooms(classrooms.filter(classroom => classroom._id !== id));
             toast.success('Semester deleted successfully');
         } catch (error) {
@@ -132,26 +132,26 @@ const Classroom = ({ isSidebarClosed }) => {
                         <div className='table'>
                             <table className="fl-table">
                                 <thead>
-                                <tr>
-                                    <th>Building</th>
-                                    <th>Room No</th>
-                                    <th>Action</th>
-                                </tr>
+                                    <tr>
+                                        <th>Building</th>
+                                        <th>Room No</th>
+                                        <th>Action</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {displayedClassrooms && displayedClassrooms.length > 0 ? (
-                                    displayedClassrooms.map((classroom, index) => (
-                                        <tr key={index}>
-                                            <td>{classroom.building}</td>
-                                            <td>{classroom.classroomNo}</td>
-                                            <td onClick={()=>handleDelete(classroom._id)}><FontAwesomeIcon icon={faTrash} /></td>
+                                    {displayedClassrooms && displayedClassrooms.length > 0 ? (
+                                        displayedClassrooms.map((classroom, index) => (
+                                            <tr key={index}>
+                                                <td>{classroom.building}</td>
+                                                <td>{classroom.classroomNo}</td>
+                                                <td onClick={() => handleDelete(classroom._id)}><FontAwesomeIcon icon={faTrash} /></td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4">No classrooms found!</td>
                                         </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="4">No classrooms found!</td>
-                                    </tr>
-                                )}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -166,17 +166,17 @@ const Classroom = ({ isSidebarClosed }) => {
                                     onChangeRowsPerPage={handleChangeRowsPerPage}
                                 />
                             </div>
-                            <div style={{'marginLeft':'20px'}}>
+                            <div style={{ 'marginLeft': '20px' }}>
                                 <FormControl>
                                     <InputLabel htmlFor="rowsPerPage">Rows Per Page</InputLabel>
                                     <Select className='formControl'
-                                            value={rowsPerPage}
-                                            label="Rows Per Page"
-                                            onChange={handleChangeRowsPerPage}
-                                            inputProps={{
-                                                name: 'rowsPerPage',
-                                                id: 'rowsPerPage',
-                                            }}
+                                        value={rowsPerPage}
+                                        label="Rows Per Page"
+                                        onChange={handleChangeRowsPerPage}
+                                        inputProps={{
+                                            name: 'rowsPerPage',
+                                            id: 'rowsPerPage',
+                                        }}
                                     >
                                         <MenuItem value={rowsPerPage}>10</MenuItem>
                                         <MenuItem value={20}>20</MenuItem>

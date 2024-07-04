@@ -41,7 +41,7 @@ const courseEnrollSchema = new mongoose.Schema({
 });
 
 // Middleware to decrement available seats when a course is enrolled
-courseEnrollSchema.pre('save', async function(next) {
+courseEnrollSchema.pre('save', async function (next) {
     try {
         const session = await mongoose.startSession();
         session.startTransaction();

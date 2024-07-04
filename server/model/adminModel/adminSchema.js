@@ -3,82 +3,82 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const adminSchema = new mongoose.Schema({
-    adminID:{
-        type:String
+    adminID: {
+        type: String
     },
-    name:{
+    name: {
         type: String,
         required: true
     },
-    email:{
+    email: {
         type: String,
-        unique:true,
+        unique: true,
         required: true,
         trim: true
     },
-    phone:{
+    phone: {
         type: String,
-        required:true,
+        required: true,
         trim: true
     },
-    gender:{
+    gender: {
         type: String,
         required: true
     },
-    address:{
-        presentAddress:{
-            district:{
+    address: {
+        presentAddress: {
+            district: {
                 type: String,
-                required:true
+                required: true
             },
-            thana:{
+            thana: {
                 type: String,
-                required:true
+                required: true
             },
-            postCode:{
+            postCode: {
                 type: String,
-                required:true
+                required: true
             }
         },
-        permanentAddress:{
-            district:{
+        permanentAddress: {
+            district: {
                 type: String,
-                required:true
+                required: true
             },
-            thana:{
+            thana: {
                 type: String,
-                required:true
+                required: true
             },
-            postCode:{
+            postCode: {
                 type: String,
-                required:true
+                required: true
             }
         }
     },
-    role:{
+    role: {
         type: String,
         default: 'admin'
     },
-    password:{
+    password: {
         type: String,
         select: false
     },
-    department:{
+    department: {
         type: mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref:'Department',
-        default:'ICS'
+        required: true,
+        ref: 'Department',
+        default: 'ICS'
     },
     dateOfBirth: {
         type: String,
-        match:/^\d{4}-\d{2}-\d{2}$/,
-        required:true
+        match: /^\d{4}-\d{2}-\d{2}$/,
+        required: true
     },
 })
-adminSchema.pre('save', async function(next){
+adminSchema.pre('save', async function (next) {
     if (this.role) {
         const departmentMap = {
-            'ICS':'100'
+            'ICS': '100'
         };
         const departmentPart = departmentMap[this['department']] || '100';
 
@@ -97,12 +97,12 @@ adminSchema.pre('save', async function(next){
     next()
 
 })
-adminSchema.methods.comparePassword = async function(enterPassword){
+adminSchema.methods.comparePassword = async function (enterPassword) {
     const hashedPassword = this.password || ''
     return await bcrypt.compare(enterPassword, hashedPassword);
 }
-adminSchema.methods.getJwtToken = async function(){
-    return jwt.sign({id: this._id}, process.env.JWT_SECRET, {
+adminSchema.methods.getJwtToken = async function () {
+    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
     });
 }

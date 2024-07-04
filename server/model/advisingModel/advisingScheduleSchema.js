@@ -33,7 +33,7 @@ const advisingScheduleSchema = new mongoose.Schema({
     }
 });
 
-advisingScheduleSchema.pre('save', function(next) {
+advisingScheduleSchema.pre('save', function (next) {
     const currentDate = new Date();
     const currentDateTime = currentDate.getTime();
     const startDateTime = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate(), ...this.startTime.split(':')).getTime();

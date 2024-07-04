@@ -6,7 +6,7 @@ const sendToken = async (user, statusCode, res) => {
     };
     res.status(200).cookie('token', token, options).json({
         success: true,
-        message:'login successfully',
+        message: 'login successfully',
         user,
         token,
     });
