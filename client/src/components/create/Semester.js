@@ -20,7 +20,7 @@ const Semester = ({ isSidebarClosed }) => {
     const handleSemesterSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('http://localhost:4000/api/v1/create/semester', semester, {
+            .post('https://advising-portal-two.vercel.app/semester/create', semester, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -69,7 +69,7 @@ const Semester = ({ isSidebarClosed }) => {
     const displayedSemesters = semesters ? semesters.slice(indexOfFirstItem, indexOfLastItem) : [];
     const fetchSemesters = () => {
         axios
-            .get('http://localhost:4000/api/v1/semesters/all')
+            .get('https://advising-portal-two.vercel.app/semester/all')
             .then((res) => {
                 setSemesters(res.data.semester);
             })
@@ -84,7 +84,7 @@ const Semester = ({ isSidebarClosed }) => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:4000/api/v1/semester/delete/${id}`);
+            await axios.delete(`https://advising-portal-two.vercel.app/semester/delete/${id}`);
             setSemesters(semesters.filter(semester => semester._id !== id));
             toast.success('Semester deleted successfully');
         } catch (error) {
