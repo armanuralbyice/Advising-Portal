@@ -8,7 +8,7 @@ const {addStudentAndSendEmail} = require("../../middleware/sendEmail");
 exports.addStudents = catchAsync(async(req,res, next)=>{
     const emailExists = await Student.findOne({email:req.body.email})
     if(emailExists){
-        return next (new ErrorHandler('Email already exist', 404));
+        return next (new ErrorHandler('Email already exist', 400));
     }
     await addStudentAndSendEmail(req, res, next)
 })

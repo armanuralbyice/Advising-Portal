@@ -10,8 +10,10 @@ import InputLabel from "@mui/material/InputLabel";
 import Pagination from "@mui/material/Pagination";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {useNavigate} from "react-router-dom";
 
 const Classroom = ({ isSidebarClosed }) => {
+    const navigate = useNavigate()
     const [classroom, setClassroom] = useState({
         building: '',
         classroomNo: '',
@@ -20,8 +22,9 @@ const Classroom = ({ isSidebarClosed }) => {
     const handleSemesterSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('https://localhost:4000/api/v6/create/classroom', classroom, {
+            .post('http://localhost:4000/classroom/save', classroom, {
                 headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json',
                 },
             })
@@ -62,12 +65,29 @@ const Classroom = ({ isSidebarClosed }) => {
     const displayedClassrooms = classrooms ? classrooms.slice(indexOfFirstItem, indexOfLastItem) : [];
     const fetchClassrooms = () => {
         axios
-            .get('https://localhost:4000/api/v6/classroom/all')
+            .get('http://localhost:4000/classroom/all',{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+            })
             .then((res) => {
                 setClassrooms(res.data.classrooms);
             })
             .catch((err) => {
-                console.log(err)
+                if (err.response) {
+                    console.log(err.response.data);
+                    if (err.response.status === 401) {
+                        console.error('Unauthorized. Please log in again.');
+                        navigate('/login');
+                    } else if (err) {
+                        toast.warning(err.response.data.message);
+                    } else {
+                        toast.error('Internal Server Error.');
+                    }
+                } else {
+                    toast.error('Network Error. Please try again later.');
+                }
             });
 
     }
@@ -77,7 +97,12 @@ const Classroom = ({ isSidebarClosed }) => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:4000/api/v6/classroom/delete/${id}`);
+            await axios.delete(`http://localhost:4000/classroom/delete/${id}`,{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+            });
             setClassrooms(classrooms.filter(classroom => classroom._id !== id));
             toast.success('Semester deleted successfully');
         } catch (error) {

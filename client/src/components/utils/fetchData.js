@@ -4,7 +4,12 @@ import {toast} from "react-toastify";
 export const fetchSemesterData = async () => {
     try {
         const res =
-            await axios.get('https://advising-portal-zzm8.vercel.app/api/v1/semesters/all');
+            await axios.get('http://localhost:4000/semester/all',{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+            });
         return res.data;
     }catch (err){
         console.error(err);
@@ -13,7 +18,12 @@ export const fetchSemesterData = async () => {
 }
 export const fetchDepartmentData = async ()=>{
     try {
-        const res = await axios.get('https://advising-portal-zzm8.vercel.app/api/v2/departments/all')
+        const res = await axios.get('http://localhost:4000/department/all',{
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        })
         return res.data
     }catch (err){
         console.log(err)
@@ -22,7 +32,12 @@ export const fetchDepartmentData = async ()=>{
 }
 export const fetchClassRooms = async () =>{
     try{
-        const res = await axios.get('https://advising-portal-zzm8.vercel.app/api/v6/classroom/all');
+        const res = await axios.get('http://localhost:4000/classroom/all',{
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        });
         return res.data
     }catch (err){
         console.log(err)
@@ -32,7 +47,12 @@ export const fetchClassRooms = async () =>{
 
 export const fetchCourses = async (selectedDepartment) =>{
     try {
-        const res = await axios.get(`https://advising-portal-zzm8.vercel.app/api/v4/courses/filter?department=${selectedDepartment}`)
+        const res = await axios.get(`http://localhost:4000/course/filter?department=${selectedDepartment}`,{
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        })
         return res.data;
     }catch (err){
         console.log(err);
@@ -41,7 +61,12 @@ export const fetchCourses = async (selectedDepartment) =>{
 }
 export const fetchFaculties = async (selectedDepartment) => {
     try{
-        const res = await axios.get(`https://advising-portal-zzm8.vercel.app/api/v3/department/${selectedDepartment}/faculties`)
+        const res = await axios.get(`http://localhost:4000/user/department/${selectedDepartment}/faculties`,{
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        })
         return res.data
     }catch (err){
         console.log(err)
@@ -51,7 +76,12 @@ export const fetchFaculties = async (selectedDepartment) => {
 
 export const fetchOfferCourses = async (semesterId, departmentId) =>{
     try {
-        const res = await axios.get (`https://advising-portal-zzm8.vercel.app/api/v5/get/offerCourses?semesterId=${semesterId}&departmentId=${departmentId}`)
+        const res = await axios.get (`http://localhost:4000/offer-course/?semesterId=${semesterId}&departmentId=${departmentId}`,{
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        })
         return res.data
     }catch (err){
         console.log(err)
@@ -66,10 +96,11 @@ export const facultyCourseListBySemester = async (selectedSemester) => {
             console.error('No token found in localStorage');
             return [];
         }
-        const headers = { Authorization: `Bearer ${token}` };
-
-        const response = await axios.get(`https://advising-portal-zzm8.vercel.app/api/v7/faculty-course-list/${selectedSemester}`, {
-            headers,
+        const response = await axios.get(`http://localhost:4000/api/v7/faculty-course-list/${selectedSemester}`, {
+         headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
             withCredentials: true,
         });
         return response.data;
@@ -85,7 +116,12 @@ export const facultyCourseListBySemester = async (selectedSemester) => {
 
 export const studentListByCourse = async (selectedSemester, selectedCourse) => {
     try {
-        const response = await axios.get(`https://advising-portal-zzm8.vercel.app/api/v7/faculty-course-list/${selectedCourse}/${selectedSemester}`)
+        const response = await axios.get(`http://localhost:4000/api/v7/faculty-course-list/${selectedCourse}/${selectedSemester}`,{
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        })
         return response.data;
     }
     catch (error) {
@@ -101,13 +137,13 @@ export const studentListByCourse = async (selectedSemester, selectedCourse) => {
 }
 export const fetchOfferCoursesForAdvising = async () => {
     try {
-        const token = localStorage.getItem('token');
         const config = {
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
         };
-        const response = await axios.get('https://advising-portal-zzm8.vercel.app/api/v7/advising/offerCourses', config);
+        const response = await axios.get('http://localhost:4000/api/v7/advising/offerCourses', config);
         return response.data;
     } catch (error) {
         if (error.response) {
@@ -124,13 +160,13 @@ export const fetchOfferCoursesForAdvising = async () => {
 };
 export const fetchAdvisingCourses = async () => {
     try {
-        const token = localStorage.getItem('token');
         const config = {
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
         };
-        const response = await axios.get('https://advising-portal-zzm8.vercel.app/api/v7/advising/course', config);
+        const response = await axios.get('http://localhost:4000/api/v7/advising/course', config);
         return response.data;
     } catch (error) {
         if (error.response) {

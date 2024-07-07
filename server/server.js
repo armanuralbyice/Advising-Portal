@@ -11,7 +11,7 @@ const adminRouter = require('../server/router/admin')
 const courseRouter = require('../server/router/course')
 const offerCourseRouter = require('../server/router/offerCourse')
 const classroomRouter = require('../server/router/classroom')
-const advisingScheduleRouter = require('../server/router/advisingSchedul')
+const advisingScheduleRouter = require('./router/advising')
 const loginRouter = require('../server/router/login')
 const cron = require('node-cron');
 const cookieParser = require('cookie-parser');
@@ -20,13 +20,13 @@ const updateIsActiveField = require('././middleware/advisingScheduleFieldsUpdate
 const app = express()
 
 app.use(express.json())
-app.use(cors({
-    origin: 'https://localhost:3000',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Authorization', 'Content-Type']
-}));
-// app.use(cors())
+// app.use(cors({
+//     origin: 'http://localhost:3000',
+//     credentials: true,
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     allowedHeaders: ['Authorization', 'Content-Type']
+// }));
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 cron.schedule('* * * * *', updateIsActiveField);
@@ -40,16 +40,16 @@ mongoose
     .then(() => console.log('Database connection successfully'))
     .catch((err) => console.log(err));
 
-app.use('/api/v1', semesterRouter)
-app.use('/api/v2', departmentRouter)
-app.use('/api/v3', studentRouter)
-app.use('/api/v3', facultyRouter)
-app.use('/api/v3', adminRouter)
-app.use('/api/v4', courseRouter)
-app.use('/api/v5', offerCourseRouter)
-app.use('/api/v6', classroomRouter)
+app.use('/semester', semesterRouter)
+app.use('/department', departmentRouter)
+app.use('/user', studentRouter)
+app.use('/user', facultyRouter)
+app.use('/user', adminRouter)
+app.use('/course', courseRouter)
+app.use('/offer-course', offerCourseRouter)
+app.use('/classroom', classroomRouter)
 app.use('/api/v7', advisingScheduleRouter)
-app.use('/api/v8', loginRouter)
+app.use('/auth', loginRouter)
 app.use(ErrorHandler)
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT} in ${process.env.NODE_ENV} mode`);

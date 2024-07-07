@@ -40,11 +40,11 @@ const Faculty = ({ isSidebarClosed }) => {
     };
     const handelSubmit = (e)=>{
         e.preventDefault()
-        axios.post('http://localhost:4000/api/v3/faculty/register',faculty,{
-            headers:{
-                method: "post",
-                "Content-Type":"application/json"
-            }
+        axios.post('http://localhost:4000/user/faculty/save',faculty,{
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
         })
             .then((res)=>{
                 if (res.status === 201){
@@ -65,10 +65,14 @@ const Faculty = ({ isSidebarClosed }) => {
     const [departments, setDepartments] = React.useState([]);
     const fetchDepartments = () => {
         axios
-            .get('http://localhost:4000/api/v2/departments/all')
+            .get('http://localhost:4000/department/all',{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+            })
             .then((res) => {
                 setDepartments(res.data.department);
-                console.log(res.data);
             })
             .catch((err) => {
                 console.log(err)

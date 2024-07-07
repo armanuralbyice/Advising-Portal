@@ -1,11 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
 .container{
     position: relative;
-    height: 100vh;
+    height: 100%;
     width: 97%;
     margin: 10px auto;
     background-color: #fff;
-    overflow: hidden;
 }
 .container header{
     height: 100px;
@@ -107,7 +106,6 @@ form .fields .input-field {
     margin-bottom: 5px;
     margin-top: 5px;
     align-items: center;
-    padding: 10px;
 }
 .title h2{
     margin-left: 10px;
@@ -372,10 +370,15 @@ form .fields .input-field-createClassroom {
     border: 1px solid #aaa;
     padding: 0 15px;
     height: 42px;
-    width: 200px;
+    width: 300px;
     margin: 8px 0;
 }
 .input-field-createClassroom input :focus,
 .input-field-createClassroom select:focus{
     box-shadow: 0 3px 6px rgba(0,0,0,0.13);
+}
+
+/*student registration*/
+.details-personal{
+    border: 1px solid black;
 }

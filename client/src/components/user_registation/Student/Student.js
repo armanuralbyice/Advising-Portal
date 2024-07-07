@@ -41,11 +41,11 @@ const Student = ({ isSidebarClosed }) => {
     };
     const handelSubmit = (e)=>{
         e.preventDefault()
-        axios.post('http://localhost:4000/api/v3/student/register',student,{
-            headers:{
-                method: "post",
-                "Content-Type":"application/json"
-            }
+        axios.post('http://localhost:4000/user/student/save',student,{
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
         })
             .then((res)=>{
                 if (res.status === 201){
@@ -67,7 +67,12 @@ const Student = ({ isSidebarClosed }) => {
     const [semesters, setSemesters] = React.useState([]);
     const fetchDepartments = () => {
         axios
-            .get('http://localhost:4000/api/v2/departments/all')
+            .get('http://localhost:4000/department/all',{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+            })
             .then((res) => {
                 setDepartments(res.data.department);
                 console.log(res.data);
@@ -79,7 +84,12 @@ const Student = ({ isSidebarClosed }) => {
     }
     const fetchSemesters = () => {
         axios
-            .get('http://localhost:4000/api/v1/semesters/all')
+            .get('http://localhost:4000/semester/all',{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+            })
             .then((res) => {
                 setSemesters(res.data.semester);
                 console.log(res.data);

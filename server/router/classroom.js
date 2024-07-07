@@ -1,14 +1,14 @@
 const express = require('express');
 const { addClassrooms, getAllClassrooms, deleteClassroom } = require("../controller/courseController/classroomController");
+const {authenticateRegister, authorizeRegisterRoles} = require("../middleware/auth");
 
 
 
 const router = express.Router();
-
-router.route('/classroom/all').get(getAllClassrooms)
-router.route('/create/classroom').post(addClassrooms)
-router.route('/classroom/delete/:id').delete(deleteClassroom)
-
-
+router.use(authenticateRegister)
+router.use(authorizeRegisterRoles)
+router.route('/all').get(authenticateRegister,getAllClassrooms)
+router.route('/save').post(authenticateRegister,addClassrooms)
+router.route('/delete/:id').delete(authenticateRegister,deleteClassroom)
 
 module.exports = router;

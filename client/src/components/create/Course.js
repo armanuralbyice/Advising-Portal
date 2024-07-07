@@ -18,8 +18,9 @@ const Course = ({ isSidebarClosed }) => {
     const handleCourseSubmit = (e) => {
         e.preventDefault();
         axios
-            .post('http://localhost:4000/api/v4/course/add', course, {
+            .post('http://localhost:4000/course/save', course, {
                 headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json',
                 },
             })
@@ -41,7 +42,12 @@ const Course = ({ isSidebarClosed }) => {
     const [departments, setDepartments] = useState([]);
     const fetchDepartments = () => {
         axios
-            .get('http://localhost:4000/api/v2/departments/all')
+            .get('http://localhost:4000/department/all',{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+            })
             .then((res) => {
                 setDepartments(res.data.department);
             })
@@ -52,15 +58,20 @@ const Course = ({ isSidebarClosed }) => {
 
     const [courses, setCourses] = useState([]);
     const fetchCourses = () => {
-        let url = 'http://localhost:4000/api/v4/courses';
+        let url = 'http://localhost:4000/course/all';
 
         // If a department is selected, update the URL to fetch filtered courses
         if (selectedDepartment) {
-            url = `http://localhost:4000/api/v4/courses/filter?department=${selectedDepartment}`;
+            url = `http://localhost:4000/course/filter?department=${selectedDepartment}`;
         }
 
         axios
-            .get(url)
+            .get(url,{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+            })
             .then((res) => {
                 setCourses(res.data.courses);
             })
@@ -184,29 +195,29 @@ const Course = ({ isSidebarClosed }) => {
                         <div className='table'>
                             <table className="fl-table">
                                 <thead>
-                                    <tr>
-                                        <th>Course Code</th>
-                                        <th>Credit</th>
-                                        <th>Department</th>
-                                    </tr>
+                                <tr>
+                                    <th>Course Code</th>
+                                    <th>Credit</th>
+                                    <th>Department</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    {displayedCourses && displayedCourses.length > 0 ? (
-                                        displayedCourses.map((course, index) => (
-                                            <tr key={index}>
-                                                <td>{course.courseCode}</td>
-                                                <td>{course.credit}</td>
-                                                <td>{course.department.name}</td>
-                                                {/*<td onClick={() => handleDelete(semester._id)}><FontAwesomeIcon*/}
-                                                {/*    icon={faTrash}/></td>*/}
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="4"> No Course found!</td>
+                                {displayedCourses && displayedCourses.length > 0 ? (
+                                    displayedCourses.map((course, index) => (
+                                        <tr key={index}>
+                                            <td>{course.courseCode}</td>
+                                            <td>{course.credit}</td>
+                                            <td>{course.department ? course.department.name : 'Unknown Department'}</td>
+                                            {/* Add other columns as needed */}
                                         </tr>
-                                    )}
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="3"> No Course found!</td>
+                                    </tr>
+                                )}
                                 </tbody>
+
                             </table>
                         </div>
                         <div className='pagination-box'>

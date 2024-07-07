@@ -46,13 +46,11 @@ form{
 }
 .offerCoursesContainer{
     position: relative;
-    height: 100vh;
+    height: 100%;
     width: 98%;
     margin: 0 auto;
     display: flex;
     justify-content: space-around;
-
-
 }
 .selectOfferCourses{
     width: 100%;
@@ -61,10 +59,9 @@ form{
     width: 10%;
 }
 .course-list-box{
-    height: 530px;
+    height: 500px;
     width: 100%;
     overflow-y: scroll;
-
 }
 .course-list-box table{
     width: 100%;
@@ -89,27 +86,7 @@ form{
     align-items: center;
     justify-content: space-between;
 }
-.input-field-checkBox{
-    /*margin-top: 20px;*/
-    display: flex;
-    width: 100px;
-    font-size: 14px;
-    align-items: center;
-    color: black;
-}
-.input-field-checkBox input{
-    height: 20px;
-    width: 40px;
-}
-.input-field-checkBox input[type='checkbox'] {
-    accent-color: black;
-}
-/*.input-field-offerCourses label{*/
-/*    font-weight: 500;*/
-/*    color: black;*/
-/*    font-size: 12px;*/
-/*    display: flex;*/
-/*}*/
+
 .input-field-offerCourses input,
 .input-field-offerCourses select {
     outline: none;

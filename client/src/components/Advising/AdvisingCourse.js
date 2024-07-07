@@ -17,8 +17,9 @@ const AdvisingCourse = ({ isSidebarClosed }) => {
         const token = localStorage.getItem('token');
         const config = {
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
         };
         try {
             const response = await axios.post(`http://localhost:4000/api/v7/advising?courseId=${courseId}`, {}, config);
@@ -76,8 +77,9 @@ const AdvisingCourse = ({ isSidebarClosed }) => {
         const token = localStorage.getItem('token');
         const config = {
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
         };
         try {
             const response = await axios.delete(`http://localhost:4000/api/v7/advising/course/delete/${courseId}`, config);

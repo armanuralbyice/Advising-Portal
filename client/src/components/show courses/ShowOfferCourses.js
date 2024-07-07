@@ -55,8 +55,11 @@ const ShowOfferCourses = ({ isSidebarClosed }) => {
 
     const handleDeleteCourse = async (courseId) => {
         try {
-            const response = await axios.delete(`http://localhost:4000/api/v5/delete/offerCourse`, {
-                params: {
+            const response = await axios.delete(`http://localhost:4000/offer-course/delete`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json',
+                    }, params: {
                     semesterId,
                     departmentId,
                     courseId

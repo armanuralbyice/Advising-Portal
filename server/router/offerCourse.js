@@ -1,12 +1,14 @@
 const express = require('express');
 const { offerCourse, deleteOfferCourse, getOfferCourses } = require("../controller/courseController/offerCourseController");
+const {authenticateRegister, authorizeRegisterRoles} = require("../middleware/auth");
 
 
 const router = express.Router();
-
-router.route('/offerCourse/add').post(offerCourse)
-router.route('/get/offerCourses').get(getOfferCourses)
-router.route('/delete/offerCourse').delete(deleteOfferCourse)
+router.use(authenticateRegister);
+router.use(authorizeRegisterRoles);
+router.route('/save').post(offerCourse)
+router.route('/').get(getOfferCourses)
+router.route('/delete').delete(deleteOfferCourse)
 
 
 module.exports = router;

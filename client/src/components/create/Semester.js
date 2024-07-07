@@ -10,20 +10,23 @@ import InputLabel from "@mui/material/InputLabel";
 import Pagination from "@mui/material/Pagination";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import {useNavigate} from "react-router-dom";
 const Semester = ({ isSidebarClosed }) => {
+    const navigate = useNavigate();
     const [semester, setSemester] = useState({
         semesterName: '',
         year: '',
     });
     const [semesters, setSemesters] = useState([]);
     const handleSemesterSubmit = (e) => {
+        const token = localStorage.getItem('token');
         e.preventDefault();
         axios
-            .post('https://advising-portal-two.vercel.app/semester/create', semester, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            .post('http://localhost:4000/semester/save', semester, {
+                headers:{
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             })
             .then((res) => {
                 if (res.status === 201) {
@@ -36,12 +39,18 @@ const Semester = ({ isSidebarClosed }) => {
                 }
             })
             .catch((err) => {
-                if (err.response && err.response.status === 409) {
-                    toast.warning(err.response.data.message);
-                    console.log(err);
+                if (err.response) {
+                    console.log(err.response.data);
+                    if (err.response.status === 401) {
+                        console.error('Unauthorized. Please log in again.');
+                        navigate('/login');
+                    } else if (err.response.status === 409) {
+                        toast.warning(err.response.data.message);
+                    } else {
+                        toast.error('Internal Server Error.');
+                    }
                 } else {
-                    toast.error('An error occurred');
-                    console.log(err);
+                    toast.error('Network Error. Please try again later.');
                 }
             });
     };
@@ -68,13 +77,31 @@ const Semester = ({ isSidebarClosed }) => {
     const indexOfFirstItem = indexOfLastItem - rowsPerPage;
     const displayedSemesters = semesters ? semesters.slice(indexOfFirstItem, indexOfLastItem) : [];
     const fetchSemesters = () => {
+        const token = localStorage.getItem('token');
         axios
-            .get('https://advising-portal-two.vercel.app/semester/all')
+            .get('http://localhost:4000/semester/all',{
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
             .then((res) => {
                 setSemesters(res.data.semester);
             })
             .catch((err) => {
-                console.log(err)
+                if (err.response) {
+                    console.log(err.response.data);
+                    if (err.response.status === 401) {
+                        console.error('Unauthorized. Please log in again.');
+                        navigate('/login');
+                    } else if (err.response.status === 404) {
+                        toast.warning('Semester not found.');
+                    } else {
+                        toast.error('Internal Server Error.');
+                    }
+                } else {
+                    toast.error('Network Error. Please try again later.');
+                }
             });
 
     }
@@ -83,8 +110,13 @@ const Semester = ({ isSidebarClosed }) => {
     }, []);
 
     const handleDelete = async (id) => {
+        const token = localStorage.getItem('token');
         try {
-            await axios.delete(`https://advising-portal-two.vercel.app/semester/delete/${id}`);
+            await axios.delete(`http://localhost:4000/semester/delete/${id}`,{
+                headers:{
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
             setSemesters(semesters.filter(semester => semester._id !== id));
             toast.success('Semester deleted successfully');
         } catch (error) {

@@ -24,12 +24,17 @@ const Users = ({isSidebarClosed}) => {
     const [allData, setAllData] = useState({ student: [], faculty: [], admin:[] });
     const [selectedDepartment, setSelectedDepartment] = useState('');
     const fetchUsers = (department) => {
-        let url = `http://localhost:4000/api/v3/${selectedCategory}/all`;
+        let url = `http://localhost:4000/user/${selectedCategory}/all`;
         if (department) {
-            url = `http://localhost:4000/api/v3/department/${department}/${selectedCategory}`;
+            url = `http://localhost:4000/user/department/${department}/${selectedCategory}`;
         }
 
-        axios.get(url)
+        axios.get(url,{
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+        })
             .then((res) => {
                 if (selectedCategory === 'students') {
                     setAllData({ ...allData, student: res.data.students });
@@ -47,7 +52,6 @@ const Users = ({isSidebarClosed}) => {
                 console.error(`Error fetching users: ${err}`);
             });
     };
-
     useEffect(() => {
         fetchUsers(selectedDepartment);
         fetchDepartments()
@@ -62,7 +66,12 @@ const Users = ({isSidebarClosed}) => {
         ) {
             if (selectedCategory === 'students') {
                 axios
-                    .get(`http://localhost:4000/api/v3/student/${studentId}`)
+                    .get(`http://localhost:4000/user/student/${studentId}`,{
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                            'Content-Type': 'application/json',
+                        },
+                    })
                     .then((res) => {
                         if (res.data.student) {
                             setUsers([res.data.student]);
@@ -79,7 +88,12 @@ const Users = ({isSidebarClosed}) => {
                     });
             } else if (selectedCategory === 'faculties') {
                 axios
-                    .get(`http://localhost:4000/api/v4/faculty/${facultyId}`)
+                    .get(`http://localhost:4000/user/faculty/${facultyId}`,{
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                            'Content-Type': 'application/json',
+                        },
+                    })
                     .then((res) => {
                         if (res.data.faculty) {
                             setUsers([res.data.faculty]);
@@ -96,7 +110,12 @@ const Users = ({isSidebarClosed}) => {
                     });
             } else if (selectedCategory === 'admins') {
                 axios
-                    .get(`http://localhost:4000/api/v7/admin/${adminID}`)
+                    .get(`http://localhost:4000/user/admin/${adminID}`,{
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                            'Content-Type': 'application/json',
+                        },
+                    })
                     .then((res) => {
                         if (res.data.admin) {
                             setUsers([res.data.admin]);
@@ -170,7 +189,12 @@ const Users = ({isSidebarClosed}) => {
     const [departments, setDepartments] = React.useState([]);
     const fetchDepartments = () => {
         axios
-            .get('http://localhost:4000/api/v2/departments/all')
+            .get('http://localhost:4000/department/all',{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+            })
             .then((res) => {
                 setDepartments(res.data.department);
             })

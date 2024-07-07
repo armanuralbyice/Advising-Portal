@@ -149,7 +149,6 @@ const OfferCourses = ({ isSidebarClosed }) => {
                 }
             }
 
-            // Check for same course in the same section conflicts
             const sameCourseConflict = offerCourses.findIndex((otherCourse, otherIndex) => {
                 return otherIndex !== index && otherCourse.courseName === courseName && otherCourse.section === section;
             });
@@ -187,7 +186,12 @@ const OfferCourses = ({ isSidebarClosed }) => {
         };
 
         try {
-            const response = await axios.post('http://localhost:4000/api/v5/offerCourse/add', dataToSend);
+            const response = await axios.post('http://localhost:4000/offer-course/save', dataToSend,{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+            })
             console.log('Courses offered successfully:', response.data);
             toast.success("Courses offered successfully!");
         } catch (err) {
@@ -195,8 +199,6 @@ const OfferCourses = ({ isSidebarClosed }) => {
             toast.error("Error offering courses!");
         }
     };
-
-
 
     return (
         <div className={`home-section ${isSidebarClosed ? 'sidebar-close' : ''}`}>
@@ -266,6 +268,7 @@ const OfferCourses = ({ isSidebarClosed }) => {
                                                     <select
                                                         value={course.courseName}
                                                         onChange={(e) => handleOfferCourseChange(index, 'courseName', e.target.value)}
+                                                        required={true}
                                                     >
                                                         <option value="">Select</option>
                                                         {courses.map(c => (
@@ -374,6 +377,7 @@ const OfferCourses = ({ isSidebarClosed }) => {
                                                     <select
                                                         value={course.facultyName}
                                                         onChange={(e) => handleOfferCourseChange(index, 'facultyName', e.target.value)}
+                                                        required={true}
                                                     >
                                                         <option value="">Select</option>
                                                         {faculties.map(faculty => (

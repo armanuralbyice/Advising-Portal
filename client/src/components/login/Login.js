@@ -26,13 +26,12 @@ const Login = () => {
         setError('');
 
         try {
-            await axios.post('http://localhost:4000/api/v8/login', {email, password}).
+            await axios.post('http://localhost:4000/auth/login', {email, password}).
             then(response => {
                 setIsAuthenticated(true);
                 const {user, token} = response.data;
-                console.log('User data:', user);
-                console.log('Token:', token);
                 localStorage.setItem('token', token);
+                localStorage.setItem('role', user.role);
                 if(response && response.status === 200){
                     navigate('/dashboard')
                 }

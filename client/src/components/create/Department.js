@@ -9,60 +9,96 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 const Department = ({ isSidebarClosed }) => {
+    const navigate = useNavigate()
     const [department, setDepartment] = useState({
         name: ''
     })
     const [departments, setDepartments] = useState([])
     const handleDepartmentSubmit = (e) => {
         e.preventDefault();
-        axios
-            .post('http://localhost:4000/api/v2/create/department', department, {
+        const token = localStorage.getItem('token');
+      try{
+          axios
+              .post('http://localhost:4000/department/save', department, {
+                  headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                  }
+              })
+              .then((res) => {
+                  if (res.status === 201) {
+                      setDepartment({
+                          name: '',
+                      });
+                      fetchDepartments()
+                      toast.success(res.data.message);
+                  }
+              })
+              .catch((err) => {
+                  if (err.response && err.response.status === 409) {
+                      toast.warning(err.response.data.message);
+                      console.log(err);
+                  } else {
+                      toast.error('Internal Server Error');
+                  }
+              });
+      }catch (err){
+          toast.error('Internal Server Error');
+      }
+    };
+
+    const fetchDepartments = () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            axios.get('http://localhost:4000/department/all', {
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
             })
-            .then((res) => {
-                if (res.status === 201) {
-                    setDepartment({
-                        name: '',
-                    });
-                    fetchDepartments()
-                    toast.success(res.data.message);
-                }
-            })
-            .catch((err) => {
-                if (err.response && err.response.status === 409) {
-                    toast.warning(err.response.data.message);
-                    console.log(err);
-                } else {
-                    toast.error('An error occurred');
-                    console.log(err);
-                }
-            });
+                .then((res) => {
+                    setDepartments(res.data.department);
+                })
+                .catch((err) => {
+                    console.error('Error fetching departments:', err);
+                    if (err.response) {
+                        console.log(err.response.data);
+                        if (err.response.status === 401) {
+                            console.error('Unauthorized. Please log in again.');
+                            navigate('/login');
+                        } else if (err.response.status === 404) {
+                            toast.warning('Departments not found.');
+                        } else {
+                            toast.error('Internal Server Error.');
+                        }
+                    } else {
+                        toast.error('Network Error. Please try again later.');
+                    }
+                });
+        } catch (error) {
+            console.error('Error fetching departments:', error);
+            toast.error('An unexpected error occurred.');
+        }
     };
-    const fetchDepartments = () => {
-        axios
-            .get('http://localhost:4000/api/v2/departments/all')
-            .then((res) => {
-                setDepartments(res.data.department);
-            })
-            .catch((err) => {
-                if (err.response && err.response.status === 404) {
-                    toast.warning(err.response.data.message);
-                } else {
-                    toast.error('An error occurred');
-                }
-            });
-
-    }
     useEffect(() => {
         fetchDepartments();
     }, []);
     const handleDelete = async (id) => {
+        const token = localStorage.getItem('token');
         try {
-            await axios.delete(`http://localhost:4000/api/v2/department/delete/${id}`);
+            await axios.delete(`http://localhost:4000/department/delete/${id}`,{
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
             setDepartments(departments.filter(department => department._id !== id));
             toast.success('Department deleted successfully');
         } catch (error) {
